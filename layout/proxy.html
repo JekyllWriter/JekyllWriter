@@ -1,0 +1,30 @@
+<div id="proxy">
+    <div class="titlebar"><i class="fa fa-user-secret"></i>Proxy<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <table>
+        <tr>
+            <td>Protocol:</td>
+            <td>
+                <select ng-model="config.type">
+                    <option value="direct" ng-selected="config.type==='direct'">DIRECT</option>
+                    <option value="http" ng-selected="config.type==='http'">HTTP</option>
+                    <option value="https" ng-selected="config.type==='https'">HTTPS</option>
+                    <option value="socks4" ng-selected="config.type==='socks4'">SOCKS4</option>
+                    <option value="socks5" ng-selected="config.type==='socks5'">SOCKS5</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Server:</td>
+            <td>
+                <input type="text" ng-model="config.server" ng-disabled="config.type==='direct'">
+            </td>
+        </tr>
+        <tr>
+            <td>Port:</td>
+            <td>
+                <input type="text" ng-model="config.port" ng-disabled="config.type==='direct'">
+            </td>
+        </tr>
+    </table>
+    <button ng-click="save()">Save</button>
+</div>

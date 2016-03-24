@@ -1,0 +1,30 @@
+<div class="accountList">
+    <ul>
+        <li ng-repeat="item in accounts.github">
+            <div>{{ item.username }}</div>
+            <div class="switcher"><i class="ion-loop" title="Update Repositories" ng-click="updateRepo(item.username, item.token)"></i><i class="ion-close" title="Remove Account" ng-click="removeGitHubAccountConfirm(item.username)"></i>
+                <input type="checkbox">
+                <i class="arrow off ion-chevron-right"></i>
+                <i class="arrow on ion-chevron-down"></i>
+                <ul class="repoList">
+                    <li ng-repeat="repo in item.repos">{{ repo }}</li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+    <div class="accountField" ng-show="showAccountField">
+        <div>
+            <input type="text" placeholder="Token" ng-model="githubAccount.token">
+            <div>
+                <a href="#" ng-click="openWebPage('https://github.com/settings/tokens/new')">Create a new token</a>
+            </div>
+        </div>
+        <div>
+            <button ng-click="addGitHubAccount()">OK</button>
+            <button ng-click="hideAccountField()">Cancel</button>
+        </div>
+    </div>
+    <div class="accountAddBtn" ng-hide="showAccountField">
+        <button ng-click="addAccount()">Add Account</button>
+    </div>
+</div>

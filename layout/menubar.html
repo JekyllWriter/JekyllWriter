@@ -1,0 +1,126 @@
+<div class="menubar" ng-show="activeTab==='home'">
+    <span class="group">
+        <span class="bigButton" id="publishAction" title="Publish" ng-click="publishConfirm()">
+            <img src="images/Airplane.png" class="icon">
+            <div class="text">Publish</div>
+        </span>
+        <span class="bigButton" id="previewAction" title="Preview" ng-click="previewPost()">
+            <img src="images/Markdown.png" class="icon">
+            <div class="text">Preview</div>
+        </span>
+    </span>
+    <span class="group" ng-controller="font">
+        <div class="groupLine">
+            <i class="fa fa-list-ul" title="Unordered List" ng-click="ul()"></i>
+            <i class="fa fa-list-ol" title="Ordered List" ng-click="ol()"></i>
+            <i class="fa fa-quote-left" title="Quote" ng-click="quote()"></i>
+            <i class="fa fa-code" title="Code" ng-click="code()"></i>
+        </div>
+        <div class="groupLine">
+            <i class="fa fa-bold" title="Bold" ng-click="bold()"></i>
+            <i class="fa fa-italic" title="Italic" ng-click="italic()"></i>
+            <i class="fa fa-underline" title="Underline" ng-click="underline()"></i>
+            <i class="fa fa-link" title="Hyperlink" ng-click="hyperlink()"></i>
+        </div>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="Picture" ng-click="showPictureBox()">
+            <img src="images/Picture.png" class="icon">
+            <div class="text">Picture</div>
+        </span>
+    </span>
+    <span class="group light" ng-controller="heading">
+        <span class="bigButton" title="Heading 1" ng-click="heading1()">
+            <img src="images/Heading1.png" class="icon">
+            <div class="text">Heading 1</div>
+        </span>
+        <span class="bigButton" title="Heading 2" ng-click="heading2()">
+            <img src="images/Heading2.png" class="icon">
+            <div class="text">Heading 2</div>
+        </span>
+        <span class="bigButton" title="Heading 3" ng-click="heading3()">
+            <img src="images/Heading3.png" class="icon">
+            <div class="text">Heading 3</div>
+        </span>
+        <span class="bigButton" title="Heading 4" ng-click="heading4()">
+            <img src="images/Heading4.png" class="icon">
+            <div class="text">Heading 4</div>
+        </span>
+        <span class="bigButton" title="Heading 5" ng-click="heading5()">
+            <img src="images/Heading5.png" class="icon">
+            <div class="text">Heading 5</div>
+        </span>
+        <span class="bigButton" title="Heading 6" ng-click="heading6()">
+            <img src="images/Heading6.png" class="icon">
+            <div class="text">Heading 6</div>
+        </span>
+    </span>
+</div>
+<div class="menubar" ng-show="activeTab==='insert'">
+    <span class="group">
+        <span class="bigButton" title="Table" ng-click="showTableBox()">
+            <img src="images/Table.png" class="icon">
+            <div class="text">Table</div>
+        </span>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="Picture" ng-click="showPictureBox()">
+            <img src="images/Picture.png" class="icon">
+            <div class="text">Picture</div>
+        </span>
+        <span class="bigButton" title="YouTube" ng-click="showTableYouTubeBox()">
+            <img src="images/YouTube.png" class="icon">
+            <div class="text">YouTube</div>
+        </span>
+        <span class="bigButton" title="Map" ng-click="showMapBox()">
+            <img src="images/Map.png" class="icon">
+            <div class="text">Map</div>
+        </span>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="Formula" ng-click="showTeXBox()">
+            <img src="images/Formula.png" class="icon">
+            <div class="text">Formula</div>
+        </span>
+    </span>
+</div>
+<div class="menubar" ng-show="activeTab==='account'">
+    <span class="group">
+        <span class="bigButton" title="Manage GitHub Accounts" ng-click="showAccountBox('GitHub')">
+            <img src="images/Octocat.png" class="icon">
+            <div class="text">GitHub</div>
+        </span>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="Manage Dropbox Accounts" ng-click="showAccountBox('Dropbox')">
+            <img src="images/Dropbox.png" class="icon">
+            <div class="text">Dropbox</div>
+        </span>
+        <span style="display: none" class="bigButton" title="Manage OneDrive Accounts" ng-click="showAccountBox('OneDrive')">
+            <img src="images/OneDrive.png" class="icon">
+            <div class="text">OneDrive</div>
+        </span>
+        <span class="bigButton" title="Manage Qiniu Accounts" ng-click="showAccountBox('Qiniu')">
+            <img src="images/Qiniu.png" class="icon">
+            <div class="text">Qiniu</div>
+        </span>
+    </span>
+    <span class="group">
+        <select ng-model="account.value" ng-change="changeAccount()" ng-options="repo.account as repo.name for repo in repos">
+            <option ng-selected="account.value===''" value="">Public</option>
+        </select>
+        <div class="text">Blog Account</div>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="History" ng-click="getHistory()">
+            <img src="images/History.png" class="icon">
+            <div class="text">History</div>
+        </span>
+    </span>
+    <span class="group">
+        <span class="bigButton" title="Proxy" ng-click="setProxy()">
+            <img src="images/Incognito.png" class="icon">
+            <div class="text">Proxy</div>
+        </span>
+    </span>
+</div>

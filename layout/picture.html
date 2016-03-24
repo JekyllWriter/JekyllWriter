@@ -1,0 +1,6 @@
+<div id="picture">
+    <div class="titlebar"><i class="fa fa-image"></i>Insert Picture<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <button class="web" ng-click="insert()">Insert Web Picture</button>
+    <button class="dropbox" ng-click="chooseImage('dropbox')" ng-disabled="!accounts.dropbox.token">Upload to Dropbox</button>
+    <button class="qiniu" ng-click="chooseImage('qiniu')" ng-disabled="!accounts.qiniu.bucket">Upload to Qiniu</button>
+</div>

@@ -1,0 +1,14 @@
+<ul>
+    <li  ng-click="fileMenu.show = !fileMenu.show; openMenu.value = false; $event.stopPropagation()">File</li>
+    <li ng-class="activeTab==='home'?'active':''" ng-click="changeTab('home')">Home</li>
+    <li ng-class="activeTab==='insert'?'active':''" ng-click="changeTab('insert')">Insert</li>
+    <li ng-class="activeTab==='account'?'active':''" ng-click="changeTab('account')">Account</li>
+    <div class="fileMenu" ng-show="fileMenu.show">
+        <div id="newPostAction" class="item" ng-click="newPostConfirm()"><span class="icon new"></span>New Post</div>
+        <div id="openPostAction" class="item" ng-click="listPost()"><span class="icon open"></span>Open Post List</div>
+        <div id="savePostAction" class="item" ng-click="savePost()"><span class="icon save"></span>Save Post</div>
+        <div class="item" ng-click="printPost()"><span class="icon print"></span>Print</div>
+        <div class="item" style="display: none"><span class="icon about"></span>About</div>
+        <div class="item" ng-click="exit()"><span class="icon exit"></span>Exit</div>
+    </div>
+</ul>

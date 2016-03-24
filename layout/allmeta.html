@@ -1,0 +1,22 @@
+<div class="allmeta">
+    <div class="titlebar"><i class="fa fa-hashtag"></i>Post Meta<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <div class="metatable">
+        <div class="scrollArea">
+            <button class="newBtn" ng-click="addNew()">Add New</button>
+            <table>
+                <tr>
+                    <th>Meta Name</th>
+                    <th>Meta Value</th>
+                </tr>
+                <tr class="newMeta">
+                    <td><input type="text" id="NewMetaName"></td>
+                    <td><input type="text" id="NewMetaValue"><button class="insert" ng-click="insert()">Insert</button><button class="cancel" ng-click="cancelNew()">Cancel</button></td>
+                </tr>
+                <tr ng-repeat="(metaName, metaValue) in postMeta" ng-if="metaName !== 'title' && metaName !== 'tags' && metaName !== 'categories'">
+                    <td>{{ metaName }}</td>
+                    <td id="metaRow_{{ metaName }}"><div class="container" ng-click="edit(metaName)">{{ metaValue }}</div><button class="remove" ng-click="remove(metaName)">Remove</button><input type="text" class="editMeta" id="meta_{{ metaName }}"><button class="saveMeta" ng-click="save(metaName)">Save</button><button class="cancelMeta" ng-click="cancel(metaName)">Cancel</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

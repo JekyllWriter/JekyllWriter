@@ -1,0 +1,9 @@
+<div class="messageBox">
+    <div class="messageIcon" ng-show="messageicon.value">
+        <img ng-src="{{ messageicon.url }}">
+    </div>
+    <div class="messageBody">{{ messagebody.value }}</div>
+    <div class="messageButton">
+        <button ng-repeat="button in buttons.value" ng-click="button.action()">{{ button.text }}</button>
+    </div>
+</div>

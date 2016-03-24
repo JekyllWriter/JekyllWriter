@@ -1,0 +1,7 @@
+<div id="account">
+    <div class="titlebar"><i class="fa {{ icon[accountType.value] }}"></i>{{ accountType.value }} Accounts<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <div class="accountBox githubAccount" ng-show="accountType.value==='GitHub'" ng-include="'layout/githubaccount.html'"></div>
+    <div class="accountBox dropboxAccount" ng-show="accountType.value==='Dropbox'" ng-include="'layout/dropboxaccount.html'"></div>
+    <div class="accountBox onedriveAccount" ng-show="accountType.value==='OneDrive'" ng-include="'layout/onedriveaccount.html'"></div>
+    <div class="accountBox qiniuAccount" ng-show="accountType.value==='Qiniu'" ng-include="'layout/qiniuaccount.html'"></div>
+</div>

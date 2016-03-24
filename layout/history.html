@@ -1,0 +1,12 @@
+<div class="history" ng-controller="history">
+    <div class="titlebar"><i class="fa fa-history"></i>History List<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <div class="historyList">
+        <div class="scrollArea">
+            <div class="group">{{ recentData.title }}</div>
+            <div class="item" ng-repeat="history in historyList.value" ng-click="openHistory(history.raw_url)">
+                <span class="historyVersion">Version {{ history.version }}</span>
+                <span class="historyDate">{{ history.date }}</span>
+            </div>
+        </div>
+    </div>
+</div>

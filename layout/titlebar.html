@@ -1,0 +1,25 @@
+<span class="logo">
+    <img src="images/logo64.png" width="32" height="32">
+</span>
+<ul class="menu">
+    <li ng-repeat="item in menu | filter:{display: true}">
+        <i class="fa {{ item.class }}" ng-click="doAction(item.title)" title="{{ item.title }}"></i>
+    </li>
+    <li class="more" ng-click="openMenu.value = !openMenu.value; fileMenu.show = false; $event.stopPropagation()">
+        <i class="fa fa-angle-down" title="More"></i>
+        <menuitem class="customMenu" ng-show="openMenu.value">
+            <div class="menuTitle">Customize Quick Access Toolbar</div>
+            <ul class="menuList">
+                <li ng-repeat="item in menu" ng-click="changeToolDisplay(item.title)">
+                    <i class="fa fa-check" title="{{ item.title }}" ng-show="item.display"></i>{{ item.title }}
+                </li>
+            </ul>
+        </menuitem>
+    </li>
+</ul>
+<span class="title"><span class="postTitle">{{ postMeta.title || 'Untitled' }}</span> - Jekyll Writer<span ng-show="unsavedChanges()"> (unsaved) <i class="unsaved fa fa-exclamation-triangle"></i></span></span>
+<ul class="right">
+    <li><i class="icon ion-ios-minus-empty" ng-click="minimize()"></i></li>
+    <li><i class="icon ion-ios-plus-empty" ng-click="maximize()"></i></li>
+    <li><i class="icon ion-ios-close-empty" ng-click="closeConfirm()"></i></li>
+</ul>

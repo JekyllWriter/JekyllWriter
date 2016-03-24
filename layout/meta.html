@@ -1,0 +1,16 @@
+<div class="meta">
+    <span class="item">
+        <input title="Categories" type="text" ng-model="postMeta.categories" placeholder="Set categories (comma separated)">
+    </span>
+    <span class="item">
+        <input title="Tags" type="text" ng-model="postMeta.tags" placeholder="Set tags (comma separated)">
+    </span>
+    <span class="item">
+        <input title="URL Slug" type="text" id="metaSlug" placeholder="URL slug">
+    </span>
+    <span class="item">
+        <input title="Post Date" type="text" class="date" id="metaDate" placeholder="Set post date" readonly>
+    </span>
+    <span class="viewall" ng-click="showAllMeta()">View All <i class="fa fa-angle-double-down"></i></span>
+</div>
+<div ng-include="'layout/allmeta.html'" ng-show="metaBox.show" class="fullcover"></div>

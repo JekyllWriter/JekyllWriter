@@ -1,0 +1,25 @@
+<div class="accountList">
+    <ul>
+        <li ng-show="!!accounts.qiniu.bucket">
+            <div>{{ accounts.qiniu.bucket }}<i class="ion-close" title="Remove Account" ng-click="removeQiniuAccountConfirm()"></i></div>
+        </li>
+    </ul>
+    <div class="accountField" ng-show="showAccountField">
+        <div>
+            <input type="text" placeholder="Bucket" ng-model="qiniuAccount.bucket">
+            <input type="text" placeholder="Base URL" ng-model="qiniuAccount.baseUrl">
+            <input type="text" placeholder="Access Key" ng-model="qiniuAccount.access">
+            <input type="text" placeholder="Secret Key" ng-model="qiniuAccount.secret">
+            <div>
+                <a href="#" ng-click="openWebPage('https://portal.qiniu.com/setting/key')">Get access key &amp; secret key</a>
+            </div>
+        </div>
+        <div>
+            <button ng-click="addQiniuAccount()">OK</button>
+            <button ng-click="hideAccountField()">Cancel</button>
+        </div>
+    </div>
+    <div class="accountAddBtn" ng-hide="showAccountField">
+        <button ng-click="addAccount()">{{ !!accounts.qiniu.bucket ? 'Change' : 'Add' }} Account</button>
+    </div>
+</div>

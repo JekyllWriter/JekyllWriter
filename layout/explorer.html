@@ -1,0 +1,20 @@
+<div class="explorer" ng-controller="explorer">
+    <div class="titlebar"><i class="fa fa-list"></i>Post List<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <div class="postList">
+        <div class="scrollArea">
+            <div class="group" ng-if="account.value">{{ account.value.replace('_', '/') }}<i class="ion-loop" ng-click="syncPostList()" title="Sync Post List"></i></div>
+            <div class="item" ng-if="account.value" ng-repeat="post in postList.account" ng-click="openPostConfirm(post, 'account')">
+                <span class="postTitle">{{ getPostSlug(post) }}</span>
+                <span class="postDate">{{ getPostDate(post) }}</span>
+                <i class="deletePost ion-ios-close-empty" ng-click="deletePost(post, 'account'); $event.stopPropagation()" title="Delete"></i>
+            </div>
+            <hr ng-if="account.value">
+            <div class="group">Public</div>
+            <div class="item" ng-repeat="post in postList.default" ng-click="openPostConfirm(post, 'default')">
+                <span class="postTitle">{{ getPostSlug(post) }}</span>
+                <span class="postDate">{{ getPostDate(post) }}</span>
+                <i class="deletePost icon ion-ios-close-empty" ng-click="deletePost(post, 'default'); $event.stopPropagation()"></i>
+            </div>
+        </div>
+    </div>
+</div>

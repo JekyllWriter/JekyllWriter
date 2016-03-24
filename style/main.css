@@ -1,0 +1,1976 @@
+/* General */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 100;
+  src: url(../lib/Raleway/Raleway-Thin.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../lib/Raleway/Raleway-Regular.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 700;
+  src: url(../lib/Raleway/Raleway-Bold.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../lib/Source_Code_Pro/SourceCodePro-Regular.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: "Source Hans Sans CN";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../lib/SourceHanSansCN/SourceHanSansCN-Regular.otf) format('opentype');
+}
+
+@font-face {
+  font-family: "Source Hans Sans CN";
+  font-style: normal;
+  font-weight: 700;
+  src: url(../lib/SourceHanSansCN/SourceHanSansCN-Bold.otf) format('opentype');
+}
+
+@keyframes loading {
+    0% {
+        left: 0;
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    95% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+.loading {
+    width: 5px;
+    height: 5px;
+    background: #2879d0;
+    position: absolute;
+    animation: loading 2s;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.1, 0.48, 0.9, 0.52);
+    animation-iteration-count: infinite;
+}
+
+.loading:first-child {
+    animation-delay: 0s;
+}
+
+.loading:nth-child(2) {
+    animation-delay: 0.25s;
+}
+
+.loading:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.loading:nth-child(4) {
+    animation-delay: 0.75s;
+}
+
+.loading:last-child {
+    animation-delay: 1s;
+}
+
+.right {
+    float: right;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: rgba(255, 255, 255, 0);
+    overflow: hidden;
+    font-family: Raleway, "Source Hans Sans CN";
+    opacity: 0;
+    transition-delay: 1.5s;
+}
+
+body.loaded {
+    background: rgba(255, 255, 255, 1);
+    opacity: 1;
+}
+
+button {
+    outline: none;
+}
+
+hr {
+    border: none;
+    border-top: #ccc 1px solid;
+}
+
+/* Calendar */
+.datepicker td, .datepicker th {
+    border-radius: 0;
+    transition: all 0.2s;
+}
+
+.datepicker.dropdown-menu {
+    border-radius: 0;
+    border: none;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+/* Notification Bar */
+.notificationbar {
+    line-height: 32px;
+    background: #ffe9cc;
+    font-size: 12px;
+    padding: 0 10px;
+    margin: 0 -10px;
+    cursor: default;
+    transition: all 0.2s;
+    -webkit-user-select: none;
+}
+
+.notificationbar:hover {
+    background: #fff4e5;
+}
+
+/* Header */
+header {
+    -webkit-user-select: none;
+    cursor: default;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+
+header ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+}
+
+header ul li {
+    display: inline-block;
+}
+
+header .fullcover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+/* Title Bar */
+#titlebar {
+    -webkit-app-region: drag;
+    line-height: 32px;
+}
+
+#titlebar>span.logo {
+    margin-left: 10px;
+}
+
+#titlebar>span.logo>img {
+    vertical-align: top;
+}
+
+#titlebar>span.logo:after {
+    content: "|"
+}
+
+#titlebar>ul.menu {
+    padding-right: 2px;
+}
+
+#titlebar>ul.menu:after {
+    content: "|";
+}
+
+#titlebar>ul.menu>li>i {
+    padding: 0 5px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+#titlebar>ul.menu>li>i:hover {
+    background: #f5f5f5;
+}
+
+#titlebar>ul.menu>li.more {
+    font-size: 12px;
+    position: relative;
+    height: 32px;
+    width: 22px;
+}
+
+#titlebar>span.title {
+    display: inline-block;
+    line-height: 14px;
+    font-size: 12px;
+}
+
+#titlebar>span.title>span.postTitle {
+    display: inline-block;
+    line-height: 14px;
+    vertical-align: top;
+    max-width: 300px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#titlebar>span.title i.unsaved {
+    margin-left: 4px;
+    font-size: 8px;
+    line-height: 14px;
+    display: inline-block;
+    vertical-align: top;
+    color: #f7bf12;
+}
+
+#titlebar>ul {
+    -webkit-app-region: no-drag;
+}
+
+#titlebar>ul>li>i {
+    line-height: 32px;
+    display: block;
+}
+
+#titlebar>ul.right {
+    padding-left: 10px;
+}
+
+#titlebar>ul.right>li>i.icon {
+    transition: all 0.2s;
+}
+
+#titlebar>ul.right>li>i.icon:hover {
+    background: #eee;
+}
+
+#titlebar>ul.right>li:last-child>i.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#titlebar .icon {
+    font-size: 24px;
+    padding: 0 16px;
+}
+
+#titlebar .customMenu {
+    position: absolute;
+    width: 200px;
+    top: 32px;
+    left: 0;
+    font-size: 12px;
+    background: white;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    z-index: 90;
+}
+
+#titlebar .customMenu>.menuTitle {
+    border-bottom: #eee 1px solid;
+    text-align: center;
+}
+
+#titlebar .customMenu>ul.menuList {
+    width: 100%;
+}
+
+#titlebar .customMenu>ul.menuList>li {
+    padding-left: 60px;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    position: relative;
+}
+
+#titlebar .customMenu>ul.menuList>li:hover {
+    background: #eee;
+}
+
+#titlebar .customMenu>ul.menuList>li>i {
+    position: absolute;
+    line-height: 32px;
+    left: 20px;
+}
+
+/* Nav Bar */
+#navbar>ul {
+    font-size: 0;
+    position: relative;
+}
+
+#navbar>ul>li {
+    font-size: 12px;
+    padding: 5px 20px;
+    transition: all 0.2s;
+}
+
+#navbar>ul>li:hover {
+    background: #f5f5f5;
+}
+
+#navbar>ul>li.active {
+    background: #eee;
+}
+
+#navbar>ul>li:first-child {
+    background: #4285f4;
+    color: white;
+}
+
+#navbar>ul>li:first-child:hover {
+    background: #256fea;
+}
+
+#navbar>ul>.fileMenu {
+    position: absolute;
+    top: 24px;
+    left: 0;
+    width: 200px;
+    background: white;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    font-size: 12px;
+    z-index: 90;
+}
+
+#navbar>ul>.fileMenu>.item {
+    line-height: 48px;
+    height: 48px;
+    color: black;
+    transition: all 0.2s;
+}
+
+#navbar>ul>.fileMenu>.item:hover {
+    background: #eee;
+}
+
+#navbar>ul>.fileMenu>.item>.icon {
+    display: inline-block;
+    height: 48px;
+    width: 48px;
+    vertical-align: top;
+    margin-right: 10px;
+    background-size: 28px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#navbar>ul>.fileMenu>.item>.icon.new {
+    background-image: url(../images/Notepad.png);
+}
+
+#navbar>ul>.fileMenu>.item>.icon.open {
+    background-image: url(../images/Folder.png);
+}
+
+#navbar>ul>.fileMenu>.item>.icon.save {
+    background-image: url(../images/Floppy.png);
+}
+
+#navbar>ul>.fileMenu>.item>.icon.print {
+    background-image: url(../images/Printer.png);
+}
+
+#navbar>ul>.fileMenu>.item>.icon.about {
+    background-image: url(../images/Info.png);
+}
+
+#navbar>ul>.fileMenu>.item>.icon.exit {
+    background-image: url(../images/Exit.png);
+}
+
+#menubar>.menubar {
+    height: 64px;
+    font-size: 0;
+    background: #eee;
+}
+
+#menubar>.menubar>.group {
+    display: inline-block;
+    height: 58px;
+    vertical-align: top;
+    padding: 2px 5px;
+    margin: 3px 0 3px -1px;
+    font-size: 12px;
+    line-height: 14px;
+    border-left: #ddd 1px solid;
+    border-right: #ddd 1px solid;
+    box-sizing: border-box;
+}
+
+#menubar>.menubar>.group.light {
+    background: white;
+    border: none;
+    margin: 3px 10px;
+}
+
+#menubar>.menubar>.group>.groupLine {
+    display: block;
+    height: 26px;
+    font-size: 0;
+}
+
+#menubar>.menubar>.group>.groupLine>i {
+    display: inline-block;
+    line-height: 28px;
+    height: 28px;
+    width: 28px;
+    font-size: 12px;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+#menubar>.menubar>.group>.groupLine>i:hover {
+    background: #f8f8f8;
+}
+
+#menubar>.menubar>.group>select {
+    background: white;
+    width: 120px;
+    margin: 10px;
+    margin-bottom: 7px;
+    border: none;
+    outline: 1px solid #ccc;
+    outline-offset:-1px;
+}
+
+#menubar>.menubar>.group>.bigButton {
+    display: inline-block;
+    min-width: 30px;
+    padding: 2px 5px;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s;
+}
+
+#menubar>.menubar>.group>.bigButton:hover {
+    background: #f8f8f8;
+}
+
+#menubar>.menubar>.group.light>.bigButton:hover {
+    background: #f4f4f4;
+}
+
+#menubar>.menubar>.group>.bigButton>.icon {
+    display: block;
+    position: relative;
+    height: 32px;
+    margin: 0 auto;
+}
+
+#menubar>.menubar>.group .text {
+    font-size: 12px;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* Meta Field */
+#meta .meta {
+    position: relative;
+    font-size: 0;
+    padding: 0 70px 0 5px;
+}
+
+#meta span.item {
+    width: 25%;
+    display: inline-block;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+#meta span.viewall {
+    text-align: center;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    line-height: 26px;
+    font-size: 12px;
+    padding: 0 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+}
+
+#meta span.viewall:hover {
+    background: #f5f5f5;
+    text-decoration: underline;
+}
+
+#meta input {
+    width: 100%;
+    line-height: 24px;
+    font-size: 12px;
+    padding: 0 5px;
+    border: #ccc 1px solid;
+    box-sizing: border-box;
+    outline: none;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: Raleway, "Source Hans Sans CN";
+}
+
+#meta input.date {
+    -webkit-user-select: none;
+}
+
+/* All Meta Box */
+.allmeta {
+    position: fixed;
+    width: 500px;
+    height: 70%;
+    left: 50%;
+    margin-left: -250px;
+    top: 15%;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+.allmeta>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+.allmeta>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+.allmeta>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+.allmeta>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+.allmeta>.metatable {
+    height: 100%;
+    padding-top: 32px;
+    margin-top: -32px;
+    box-sizing: border-box;
+}
+
+.allmeta>.metatable>.scrollArea {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.allmeta>.metatable>.scrollArea>table {
+    width: 100%;
+    max-width: 100%;
+    font-size: 12px;
+}
+
+.allmeta>.metatable>.scrollArea>table th:first-child {
+    text-align: right;
+}
+
+.allmeta>.metatable>.scrollArea>table td,
+.allmeta>.metatable>.scrollArea>table th {
+    width: 70%;
+    max-width: 70%;
+    padding: 6px 10px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.allmeta>.metatable>.scrollArea>table input {
+    margin: 0!important;
+}
+
+.allmeta>.metatable>.scrollArea>table td:first-child,
+.allmeta>.metatable>.scrollArea>table th:first-child {
+    width: 30%;
+    max-width: 30%;
+    padding-right: 0;
+    text-align: right;
+}
+
+.allmeta>.metatable>.scrollArea>table tr.newMeta {
+    display: none;
+}
+
+.allmeta>.metatable>.scrollArea>table tr.newMeta.add {
+    display: table-row;
+}
+
+.allmeta>.metatable>.scrollArea>table tr.newMeta * {
+    vertical-align: top;
+}
+
+.allmeta>.metatable>.scrollArea>table tr.newMeta input {
+    width: 100%;
+}
+
+.allmeta>.metatable>.scrollArea>table tr.newMeta>td:last-child {
+    padding-right: 120px;
+}
+
+.allmeta>.metatable>.scrollArea>table button {
+    line-height: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 12px;    
+    outline: none;
+    position: absolute;
+    font-size: 12px;
+    width: 50px;
+    top: 6px;
+    transition: all 0.2s;
+}
+
+.allmeta>.metatable>.scrollArea button.newBtn {
+    line-height: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 12px;    
+    outline: none;
+    font-size: 12px;
+    width: 80px;
+    margin: 10px;
+    border: #4285f4 1px solid;
+    background: #4285f4;
+    color: white;
+    transition: all 0.2s;
+}
+
+.allmeta>.metatable>.scrollArea button.newBtn:hover {
+    background: #256fea;
+}
+
+.allmeta>.metatable>.scrollArea>table button.insert,
+.allmeta>.metatable>.scrollArea>table button.saveMeta {
+    border: #4285f4 1px solid;
+    background: #4285f4;
+    color: white;
+    right: 65px;
+}
+
+.allmeta>.metatable>.scrollArea>table button.cancel,
+.allmeta>.metatable>.scrollArea>table button.cancelMeta
+ {
+    border: #ccc 1px solid;
+    background: white;
+    color: black;
+    right: 10px;
+}
+
+.allmeta>.metatable>.scrollArea>table button.remove {
+    width: 65px;
+    border: #ccc 1px solid;
+    background: white;
+    color: black;
+    right: 50px;
+    display: none;
+}
+
+.allmeta>.metatable>.scrollArea>table td:not(.edit):hover button.remove {
+    display: block;
+}
+
+.allmeta>.metatable>.scrollArea>table button.insert:hover {
+    background: #256fea;
+}
+
+.allmeta>.metatable>.scrollArea>table button.cancel:hover,
+.allmeta>.metatable>.scrollArea>table button.remove:hover,
+.allmeta>.metatable>.scrollArea>table button.cancelMeta:hover {
+    background: #f5f5f5;
+}
+
+.allmeta>.metatable>.scrollArea>table button.saveMeta,
+.allmeta>.metatable>.scrollArea>table button.cancelMeta,
+.allmeta>.metatable>.scrollArea>table input.editMeta {
+    display: none;
+}
+
+.allmeta>.metatable>.scrollArea>table td.edit {
+    padding-right: 120px;
+}
+
+.allmeta>.metatable>.scrollArea>table td.edit button.saveMeta,
+.allmeta>.metatable>.scrollArea>table td.edit button.cancelMeta,
+.allmeta>.metatable>.scrollArea>table td.edit input.editMeta {
+    display: block;
+}
+
+.allmeta>.metatable>.scrollArea .container {
+    width: 209px;
+    padding: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    cursor: text;
+}
+
+.allmeta>.metatable>.scrollArea td.edit .container {
+    display: none;
+}
+
+.allmeta>.metatable>.scrollArea td:hover .container {
+    border-color: #ccc;
+}
+
+/* Main Container */
+main {
+    height: 100%;
+    padding-top: 156px;
+    box-sizing: border-box;
+}
+
+/* Editor */
+#editor {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#editor>.editorContainer {
+    width: 720px;
+    height: 100%;
+    position: relative;
+    margin: 0 auto;
+}
+
+#editor>.editorContainer>.editorTitle {
+    padding-top: 20px;
+}
+
+#editor>.editorContainer>.editorTitle>input {
+    width: 100%;
+    font-size: 36px;
+    border: #555 1px solid;
+    color: #555;
+    padding: 10px;
+    box-sizing: border-box;
+    outline: none;
+    font-family: "Source Code Pro", "Source Hans Sans CN";
+}
+
+#editor>.editorContainer>.editorContent {
+    height: 100%;
+    padding-top: 87px;
+    margin-top: -87px;
+    box-sizing: border-box;
+}
+
+#editor>.editorContainer>.editorContent>textarea {
+    width: 100%;
+    min-height: 90%;
+    border: none;
+    padding: 20px 10px;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+    word-break: break-all;
+    word-wrap: break-word;
+    font-family: "Source Code Pro", "Source Hans Sans CN";
+}
+
+/* Message Box */
+.messageBox {
+    position: fixed;
+    width: 400px;
+    padding: 30px;
+    left: 50%;
+    top: 50%;
+    margin: -100px 0 0 -200px;
+    background: white;
+    z-index: 100;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+}
+
+.messageIcon {
+    width: 80px;
+    height: 80px;
+    float: left;
+}
+
+.messageBody {
+    font-size: 12px;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    clear: right;
+}
+
+.messageButton {
+    text-align: right;
+}
+
+.messageButton>button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    background: white;
+    border: #eee 1px solid;
+    transition: all 0.2s;
+}
+
+.messageButton>button:hover {
+    background: #eee;
+}
+
+.messageButton>button:active {
+    background: #f5f5f5;
+    border-color: #f5f5f5;
+}
+
+/* Loading Box */
+.loadingBox {
+    position: fixed;
+    width: 460px;
+    padding: 20px;
+    left: 50%;
+    top: 50%;
+    margin: -100px 0 0 -230px;
+    background: white;
+    z-index: 100;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+}
+
+.loadingBox .loadingBar {
+    margin-bottom: 30px;
+}
+
+.loadingBox .loadingBody {
+    padding: 0 10px;
+    font-size: 12px;
+}
+
+/* Explorer */
+.explorer {
+    position: fixed;
+    width: 500px;
+    height: 70%;
+    left: 50%;
+    margin-left: -250px;
+    top: 15%;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+.explorer>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+.explorer>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+.explorer>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+.explorer>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+.explorer>.postList {
+    height: 100%;
+    font-size: 12px;
+    margin-top: -32px;
+    padding-top: 32px;
+    box-sizing: border-box;
+}
+
+.explorer>.postList>.scrollArea {
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.explorer>.postList>.scrollArea>.group {
+    line-height: 24px;
+    height: 24px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    position: relative;
+}
+
+.explorer>.postList>.scrollArea>.group>i {
+    position: absolute;
+    padding: 0 10px;
+    right: 0px;
+    top: 0;
+    line-height: 24px;
+    height: 24px;
+}
+
+.explorer>.postList>.scrollArea>.item {
+    line-height: 24px;
+    font-size: 12px;
+    padding: 0 5px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.explorer>.postList>.scrollArea>.item:hover {
+    background: #f5f5f5;
+}
+
+.explorer>.postList>.scrollArea>.item>.postTitle {
+    display: inline-block;
+    line-height: 24px;
+    vertical-align: top;
+    max-width: 280px;
+    text-overflow: ellipsis;
+}
+
+.explorer>.postList>.scrollArea>.item>.postDate,
+.explorer>.postList>.scrollArea>.item>.deletePost {
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    vertical-align: top;
+    padding: 0 10px;
+    right: 0;
+    position: absolute;
+}
+
+.explorer>.postList>.scrollArea>.item>.postDate {
+    color: #ccc;
+    font-family: sans-serif;
+}
+
+.explorer>.postList>.scrollArea>.item:hover>.postDate {
+    display: none;
+}
+
+.explorer>.postList>.scrollArea>.item>.deletePost {
+    font-size: 24px;
+    display: none;
+}
+
+.explorer>.postList>.scrollArea>.item:hover>.deletePost {
+    display: inline-block;
+}
+
+
+/* History */
+.history {
+    position: fixed;
+    width: 500px;
+    height: 70%;
+    left: 50%;
+    margin-left: -250px;
+    top: 15%;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+.history>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+.history>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+.history>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+.history>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+.history>.historyList {
+    height: 100%;
+    font-size: 12px;
+    margin-top: -32px;
+    padding-top: 32px;
+    box-sizing: border-box;
+}
+
+.history>.historyList>.scrollArea {
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.history>.historyList>.scrollArea>.group {
+    line-height: 24px;
+    height: 24px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    position: relative;
+}
+
+.history>.historyList>.scrollArea>.group>i {
+    position: absolute;
+    padding: 0 10px;
+    right: 0px;
+    top: 0;
+    line-height: 24px;
+    height: 24px;
+}
+
+.history>.historyList>.scrollArea>.item {
+    height: 24px;
+    font-size: 12px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.history>.historyList>.scrollArea>.item:hover {
+    background: #f5f5f5;
+}
+
+.history>.historyList>.scrollArea>.item>.historyVersion {
+    display: block;
+    line-height: 24px;
+    height: 24px;
+    padding: 0 5px;
+    font-family: sans-serif;
+}
+
+.history>.historyList>.scrollArea>.item>.historyDate {
+    display: block;
+    line-height: 24px;
+    height: 24px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 5px;
+    font-family: sans-serif;
+    color: #ccc;
+}
+
+/* Preview */
+#preview {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#preview>.container {
+    padding: 52px 10px 10px 10px;
+    width: 720px;
+    min-height: 100%;
+    position: relative;
+    margin: 0 auto;
+}
+
+#preview>.container>h1 {
+    text-align: center;
+    font-family: "Source Hans Sans CN";
+}
+
+#preview>.container>hr {
+    border-top: #ccc 2px solid;
+    margin-bottom: 60px;
+}
+
+#preview>.container>.markdown-body {
+    font-family: "Source Hans Sans CN";
+}
+
+#preview>.container>.markdown-body p {
+    text-indent: 2em;
+}
+
+#preview>.container>.markdown-body p>img {
+    margin-left: -2em;
+    background-color: transparent;
+}
+
+#preview>.container>.notificationbar {
+    position: fixed;
+    width: 720px;
+    margin-top: -52px;
+    border-top: white 10px solid;
+    border-bottom: white 10px solid;
+}
+
+/* Account Box */
+#account {
+    position: fixed;
+    width: 500px;
+    height: 70%;
+    left: 50%;
+    margin-left: -250px;
+    top: 15%;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+
+#account>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#account>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#account>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#account>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#account>.accountBox {
+    height: 100%;
+    font-size: 12px;
+    margin-top: -32px;
+    padding-top: 32px;
+    box-sizing: border-box;
+    background-size: 400px;
+    background-repeat: no-repeat;
+    background-position: -160px center;
+}
+
+#account>.githubAccount {
+    background-image: url(../images/Octocat.png);
+}
+
+#account>.dropboxAccount {
+    background-image: url(../images/DropBox.png);
+}
+
+#account>.onedriveAccount {
+    background-image: url(../images/OneDrive.png);
+}
+
+#account>.qiniuAccount {
+    background-image: url(../images/Qiniu.png);
+}
+
+#account>.accountBox>.accountList {
+    padding: 0 30px 30px 260px;
+    height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#account>.accountBox>.accountList button {
+    margin-left: 10px;
+    padding: 5px 20px;
+    font-size: 12px;
+    background: white;
+    border: #eee 1px solid;
+    transition: all 0.2s;
+}
+
+#account>.accountBox>.accountList button:not(:disabled):hover {
+    background: #eee;
+}
+
+#account>.accountBox>.accountList button:active,
+#account>.accountBox>.accountList button:disabled {
+    background: #f5f5f5;
+    border-color: #f5f5f5;
+}
+
+#account>.accountBox>.accountList ul,
+#account>.accountBox>.accountList li {
+    display: block;
+}
+
+#account>.accountBox>.accountList>ul {
+    margin-top: 10px;
+}
+
+#account>.accountBox>.accountList>ul>li {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher {
+    margin-top: -24px;
+    padding-right: 50px;
+    position: relative;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>input[type="checkbox"] {
+    display: block;
+    width: 100%;
+    height: 24px;
+    opacity: 0;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>i {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    line-height: 24px;
+    height: 24px;
+    padding: 0 5px;
+    display: none;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>i:first-child {
+    right: 24px;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>i.arrow {
+    right: auto;
+    top: 0;
+    font-size: 12px;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>i.on {
+    left: -24px;
+    display: none;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher>i.off {
+    left: -20px;
+    display: inline-block;
+}
+
+#account>.accountBox>.accountList>ul>li>.switcher:hover>i:not(.arrow) {
+    display: inline-block;
+}
+
+#account>.accountBox>.accountList .repoList {
+    margin-left: 10px;
+    font-size: 14px;
+    display: none;
+}
+
+#account>.accountBox>.accountList input[type="checkbox"]:checked~.repoList {
+    display: block;
+}
+
+#account>.accountBox>.accountList input[type="checkbox"]:checked~.on {
+    display: inline-block;
+}
+
+#account>.accountBox>.accountList input[type="checkbox"]:checked~.off {
+    display: none;
+}
+
+#account>.accountBox>.accountList>.accountField {
+    margin-top: 30px;
+    text-align: right;
+}
+
+#account>.accountBox>.accountList>.accountField input {
+    width: 200px;
+    border: #ccc 1px solid;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 14px;
+    line-height: 24px;
+    padding: 0 5px;
+    margin-top: 10px;
+}
+
+#account>.accountBox>.accountList>.accountField input:first-child {
+    margin-top: 0;
+}
+
+#account>.accountBox>.accountList>.accountField a {
+    display: inline-block;
+    color: #4285f4;
+    margin: 10px 0;
+}
+
+#account>.accountBox>.accountList>.accountAddBtn {
+    text-align: right;
+    margin-top: 30px;
+}
+
+#account>.accountBox>.accountList>ul>li>div {
+    position: relative;
+}
+
+#account>.accountBox>.accountList>ul>li>div>i {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    line-height: 24px;
+    height: 24px;
+    padding: 0 5px;
+    display: none;
+}
+
+#account>.accountBox>.accountList>ul>li>div:hover>i {
+    display: block;
+}
+
+/* Proxy Box */
+#proxy {
+    position: fixed;
+    width: 300px;
+    height: 232px;
+    left: 50%;
+    margin-left: -150px;
+    top: 200px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    font-size: 0;
+}
+
+#proxy>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#proxy>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#proxy>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#proxy>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#proxy>table {
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+#proxy>table td {
+    line-height: 36px;
+    height: 36px;
+}
+
+#proxy>table td:first-child {
+    text-align: right;
+    width: 80px;
+}
+
+#proxy>table td:last-child {
+    padding-left: 10px;
+}
+
+#proxy>table input {
+    background: white;
+    border: 1px solid #ccc;
+    width: 170px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 5px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#proxy>table input:disabled {
+    background: #f5f5f5;
+}
+
+#proxy>table select {
+    background: white;
+    width: 170px;
+    height: 24px;
+    line-height: 24px;
+    margin-bottom: 7px;
+    border: none;
+    outline: 1px solid #ccc;
+    outline-offset:-1px;
+}
+
+#proxy>button {
+    position: absolute;
+    right: 40px;
+    bottom: 20px;
+    margin-left: 10px;
+    padding: 5px 20px;
+    font-size: 12px;
+    background: white;
+    border: #eee 1px solid;
+    transition: all 0.2s;
+}
+
+#proxy>button:hover {
+    background: #eee;
+}
+
+/* Picture Box */
+#picture {
+    position: fixed;
+    width: 600px;
+    height: 232px;
+    left: 50%;
+    margin-left: -300px;
+    top: 200px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    font-size: 0;
+}
+
+#picture>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#picture>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#picture>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#picture>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#picture>button {
+    width: 160px;
+    height: 160px;
+    border: 0;
+    padding-top: 100px;
+    margin: 20px;
+    font-size: 12px;
+    box-sizing: border-box;
+    background-color: transparent;
+    background-position: center;
+    background-size: 100px;
+    background-position: center 20px;
+    background-repeat: no-repeat;
+    transition: all 0.2s;
+}
+
+#picture>button:hover {
+    background-color: #eee;
+}
+
+#picture>button.dropbox {
+    background-image: url(../images/Dropbox.png);
+}
+
+#picture>button.web {
+    background-image: url(../images/Earth.png);
+}
+
+#picture>button.qiniu {
+    background-image: url(../images/Qiniu.png);
+}
+
+#picture>button:disabled {
+    -webkit-filter: grayscale(100%);
+}
+
+#picture>button:disabled:hover {
+    background-color: transparent;
+}
+
+/* TeX Box */
+#tex {
+    position: fixed;
+    width: 600px;
+    height: 400px;
+    left: 50%;
+    margin-left: -300px;
+    top: 50%;
+    margin-top: -200px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+#tex>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#tex>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#tex>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#tex>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#tex>.result {
+    height: 210px;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+}
+
+#tex>.texinput {
+    padding: 10px;
+}
+
+#tex>.texinput>textarea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    resize: none;
+}
+
+#tex>.buttonArea {
+    text-align: right;
+    padding: 10px;
+}
+
+#tex>.buttonArea>button {
+    margin-left: 10px;
+    padding: 5px 20px;
+    font-size: 12px;
+    background: #4285f4;
+    border: #4285f4 1px solid;
+    color: white;
+    transition: all 0.2s;
+}
+
+#tex>.buttonArea>button:hover {
+    background: #256fea;
+    border: #256fea 1px solid;
+}
+
+/* Map Box */
+#map {
+    position: fixed;
+    width: 640px;
+    height: 560px;
+    left: 50%;
+    margin-left: -320px;
+    top: 50%;
+    margin-top: -280px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+#map>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#map>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#map>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#map>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#map>.buttonArea {
+    text-align: right;
+    padding: 10px;
+}
+
+#map>.buttonArea>button {
+    margin-left: 10px;
+    padding: 5px 20px;
+    font-size: 12px;
+    background: #4285f4;
+    border: #4285f4 1px solid;
+    color: white;
+    transition: all 0.2s;
+}
+
+#map>.buttonArea>button:hover {
+    background: #256fea;
+    border: #256fea 1px solid;
+}
+
+#map .controls {
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+#googleMap {
+    width: 640px;
+    height: 480px;
+}
+
+#pac-input {
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 300px;
+    display: none;
+}
+
+.pac-container {
+    font-family: Roboto;
+}
+
+#type-selector {
+    color: #fff;
+    background-color: #4d90fe;
+    padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+#target {
+    width: 345px;
+}
+
+/* Table Box */
+#table {
+    position: fixed;
+    width: 500px;
+    height: 420;
+    left: 50%;
+    margin-left: -250px;
+    top: 50%;
+    margin-top: -210px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+
+#table>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#table>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#table>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#table>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#table>.tableSizing {
+    padding: 10px;
+}
+
+#table>.tableSizing>table {
+    border: none;
+    width: 100%;
+    font-size: 0;
+}
+
+#table>.tableSizing>table>tbody>tr {
+    border: none;
+}
+
+#table>.tableSizing>table>tbody>tr>td {
+    border: 3px solid white;
+    background: #ccc;
+    width: 10%;
+    height: 42px;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+#table>.tableSizing>table.r1>tbody>tr:nth-child(-n+1)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r2>tbody>tr:nth-child(-n+2)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r3>tbody>tr:nth-child(-n+3)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r4>tbody>tr:nth-child(-n+4)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r5>tbody>tr:nth-child(-n+5)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r6>tbody>tr:nth-child(-n+6)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r7>tbody>tr:nth-child(-n+7)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.r8>tbody>tr:nth-child(-n+8)>td {
+    background: #888;
+}
+
+#table>.tableSizing>table.c1>tbody>tr>td:nth-child(n+2) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c2>tbody>tr>td:nth-child(n+3) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c3>tbody>tr>td:nth-child(n+4) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c4>tbody>tr>td:nth-child(n+5) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c5>tbody>tr>td:nth-child(n+6) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c6>tbody>tr>td:nth-child(n+7) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c7>tbody>tr>td:nth-child(n+8) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c8>tbody>tr>td:nth-child(n+9) {
+    background: #ccc;
+}
+
+#table>.tableSizing>table.c9>tbody>tr>td:nth-child(n+10) {
+    background: #ccc;
+}
+
+/* YouTube Box */
+#youtube {
+    position: fixed;
+    width: 500px;
+    height: 100;
+    left: 50%;
+    margin-left: -250px;
+    top: 160px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+
+#youtube>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#youtube>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#youtube>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#youtube>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#youtube>.youtubeBody {
+    padding: 10px;
+    font-size: 0;
+}
+
+#youtube>.youtubeBody>input {
+    width: 380px;
+    height: 30px;
+    line-height: 30px;
+    border: #eee 1px solid;
+    border-right: none;
+    background: white;
+    padding: 0 10px;
+    box-sizing: border-box;
+    vertical-align: top;
+    outline: none;
+    font-size: 12px;
+}
+
+#youtube>.youtubeBody>button {
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: #eee 1px solid;
+    background: white;
+    padding: 0;
+    vertical-align: top;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+#youtube>.youtubeBody>button:hover {
+    background: #eee;
+}
+
+/* Print */
+@media print {
+    header, #editor, #preview>.container>.notificationbar {
+        display: none;
+    }
+
+    #preview {
+        overflow-y: visible;
+        display: block!important;
+    }
+
+    #preview>.container {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    #preview>.container .markdown-body pre {
+        overflow-x: hidden;
+    }
+}
