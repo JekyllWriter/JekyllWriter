@@ -62,6 +62,10 @@
     }
 }
 
+input[type="text"]:not(#editorTitle):focus {
+    border-color: #4285f4!important;
+}
+
 .loading {
     width: 5px;
     height: 5px;
@@ -503,6 +507,15 @@ header .fullcover {
     display: inline-block;
     padding: 0 5px;
     box-sizing: border-box;
+    position: relative;
+}
+
+#meta span.item .fa {
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    font-size: 12px;
+    color: #888;
 }
 
 #meta span.viewall {
@@ -539,6 +552,7 @@ header .fullcover {
 
 #meta input.date {
     -webkit-user-select: none;
+    padding-left: 20px;
 }
 
 /* All Meta Box */
@@ -664,7 +678,7 @@ header .fullcover {
     outline: none;
     font-size: 12px;
     width: 80px;
-    margin: 10px;
+    margin: 10px 10px 10px 370px;
     border: #4285f4 1px solid;
     background: #4285f4;
     color: white;
@@ -1256,13 +1270,12 @@ main {
 
 #account>.accountBox>.accountList>ul>li>.switcher {
     margin-top: -24px;
-    padding-right: 50px;
     position: relative;
 }
 
 #account>.accountBox>.accountList>ul>li>.switcher>input[type="checkbox"] {
     display: block;
-    width: 100%;
+    width: 160px;
     height: 24px;
     opacity: 0;
 }
@@ -1306,6 +1319,29 @@ main {
     margin-left: 10px;
     font-size: 14px;
     display: none;
+}
+
+#account>.accountBox>.accountList input[type="text"] {
+    outline: none;
+    width: 120px;
+    padding: 0 5px;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+}
+
+#account>.accountBox>.accountList i.fa {
+    margin-left: 10px;
+    color: #888;
+}
+
+#account>.accountBox>.accountList i.fa:hover {
+    color: black;
+}
+
+#account>.accountBox>.accountList a {
+    font-size: 12px;
+    display: inline-block;
+    color: #4285f4;
 }
 
 #account>.accountBox>.accountList input[type="checkbox"]:checked~.repoList {
@@ -1927,7 +1963,6 @@ main {
     height: 30px;
     line-height: 30px;
     border: #eee 1px solid;
-    border-right: none;
     background: white;
     padding: 0 10px;
     box-sizing: border-box;
@@ -1937,9 +1972,10 @@ main {
 }
 
 #youtube>.youtubeBody>button {
-    width: 100px;
+    width: 90px;
     height: 30px;
     line-height: 30px;
+    margin-left: 10px;
     text-align: center;
     border: #eee 1px solid;
     background: white;

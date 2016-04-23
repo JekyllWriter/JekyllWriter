@@ -1,1 +1,1 @@
-var app = angular.module('motedown', []);
+var app = angular.module('jekyllwriter', []);

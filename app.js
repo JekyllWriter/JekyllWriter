@@ -55,7 +55,7 @@ app.on('ready', function() {
         minWidth: 800,
         minHeight: 600,
         frame: false,
-        transparent: true,
+        show: false,
         icon: __dirname + '/images/logo512.png'
     });
 
@@ -68,6 +68,7 @@ app.on('ready', function() {
     });
 
     setTimeout(function() {
+        mainWindow.show();
         landingWindow.close();
     }, 2000);
 });

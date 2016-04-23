@@ -363,6 +363,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
             });
         }
     };
+    
+    $scope.$on('showAccountBox', function(event, accountType) {
+        $scope.showAccountBox(accountType);
+    });
 
     $scope.showAccountBox = function(accountType) {
         $rootScope.accountType = {
@@ -1573,7 +1577,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         }, 100);
     };
 })
-.controller('account', function($scope, $rootScope, storage, github, dropbox, showMessageBox, closeMessageBox) {
+.controller('account', function($scope, $rootScope, __basePath, file, storage, github, dropbox, showMessageBox, closeMessageBox) {
     $rootScope.loading = {
         show: false
     };
@@ -1605,6 +1609,434 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         Qiniu: 'fa-cloud'
     };
 
+    $scope.newPath = [];
+    $scope.pathName = [];
+    $scope.pathNameErr = [];
+    
+    $scope.getToken = function(username) {
+        $scope.token = '';
+
+        for (var i = 0; i < $rootScope.accounts.github.length; i++) {
+            if ($rootScope.accounts.github[i].username === username) {
+                $scope.token = $rootScope.accounts.github[i].token;
+                break;
+            }
+        }
+
+        if ($scope.token) {
+            github.authenticate({
+                type: 'oauth',
+                token: $scope.token
+            });
+        }
+    };
+
+    $scope.showNewPath = function(index) {
+        $scope.newPath[index] = !$scope.newPath[index];
+        $scope.pathNameErr[index] = false;
+    };
+
+    $scope.checkPath = function(username, index) {
+        $scope.pathName[index] = $scope.pathName[index] || '';
+        path = $scope.pathName[index].replace(/^\s*|\s*$/g, '');
+        $scope.pathNameErr[index] = !/^[A-Za-z0-9_-]*$/.test(path);
+        if (!$scope.pathNameErr[index]) {
+            var repo = path || username + '.github.io';
+            $scope.getToken(username);
+            $scope.checkRepoExit(username, repo, index);
+        }
+    };
+
+    $scope.checkRepoExit = function(username, repo, index) {
+        $scope.close();
+
+        $rootScope.loadingText = {
+            text: 'Checking whether the path exits...'
+        };
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        var branch;
+        if ((username + '.github.com').toLowerCase() === repo.toLowerCase() ||
+                (username + '.github.io').toLowerCase() === repo.toLowerCase()) {
+            branch = 'master';
+        } else {
+            branch = 'gh-pages';
+        }
+
+        $scope.getRepo(username, repo, branch, index);
+    };
+
+    $scope.getRepo = function(username, repo, branch, index) {
+        github.ng(github.repos.get, {user: username, repo: repo}).then(function(info) {
+            $scope.getRepoContent(username, repo, branch, '', function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('The path already exits, would you like to overwrite?', 'help', [{
+                    text: 'Yes',
+                    action: function() {
+                        closeMessageBox();
+                        $scope.uploadDefaultTheme(username, repo, branch, index);
+                    }
+                }, {
+                    text: 'No',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.$broadcast('showAccountBox', 'GitHub');
+                    }
+                }]);
+            }, function() {
+                if (info.size === 0) { // Empty repo
+                   $scope.createReadme(username, repo, index);
+                } else {
+                    $scope.createGhPagesBranch(username, repo, index);
+                }
+            });
+        }, function() {
+            $scope.createRepo(username, repo, index);
+        });
+    };
+
+    $scope.createRepo = function(username, repo, index) {
+        $rootScope.loadingText = {
+            text: 'Creating repository...'
+        };
+
+        github.ng(github.repos.create, {name: repo}).then(function() {
+            $scope.createReadme(username, repo, index);
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Create path failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.$broadcast('showAccountBox', 'GitHub');
+                }
+            }]);
+        });
+    };
+    
+    $scope.createReadme = function(username, repo, index) {
+        $rootScope.loadingText = {
+            text: 'Initial repository...'
+        };
+
+        github.ng(github.repos.createContent, {
+            user: username,
+            repo: repo,
+            path: 'README.md',
+            message: 'Initial',
+            content: btoa('Created by Jekyll Writer')
+        }).then(function() {
+            if ((username + '.github.com').toLowerCase() === repo.toLowerCase() ||
+                (username + '.github.io').toLowerCase() === repo.toLowerCase()) {
+                $scope.uploadDefaultTheme(username, repo, 'master', index);
+            } else {
+                $scope.createGhPagesBranch(username, repo, index);
+            }
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Initial path failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.$broadcast('showAccountBox', 'GitHub');
+                }
+            }]);
+        });
+    };
+    
+    $scope.createGhPagesBranch = function(username, repo, index) {
+        $scope.getDefaultBranch(username, repo, function(branch) {
+            if (branch === null) {
+                return;
+            }
+            
+            github.ng(github.gitdata.getReference, {user: username, repo: repo, ref: 'heads/' + branch}).then(function(info) {
+                $rootScope.loadingText = {
+                    text: 'Creating gh-pages branch...'
+                };
+
+                var sha = info.object.sha;
+                github.ng(github.gitdata.createReference, {user: username, repo: repo, ref: 'refs/heads/gh-pages', sha: sha}).then(function() {
+                    $scope.uploadDefaultTheme(username, repo, 'gh-pages', index);
+                }, function() {
+                    $rootScope.loading = {
+                        show: false
+                    };
+
+                    showMessageBox('Create gh-pages branch failed, please try again later.', 'error', [{
+                        text: 'OK',
+                        action: function() {
+                            closeMessageBox();
+                            $rootScope.$broadcast('showAccountBox', 'GitHub');
+                        }
+                    }]);
+                });
+            }, function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Get default branch heads SHA failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.$broadcast('showAccountBox', 'GitHub');
+                    }
+                }]);
+            });
+        });
+    };
+    
+    $scope.getDefaultBranch = function(username, repo, callback) {
+        $rootScope.loadingText = {
+            text: 'Fetching default branch information...'
+        };
+
+        github.ng(github.repos.get, {user: username, repo: repo}).then(function(info) {
+            callback(info.default_branch);
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Get default branch failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.$broadcast('showAccountBox', 'GitHub');
+                }
+            }]);
+            callback(null);
+        });
+    };
+    
+    $scope.uploadDefaultTheme = function(username, repo, branch, index) {
+        $rootScope.loadingText = {
+            text: 'Uploading theme...'
+        };
+
+        $rootScope.loading = {
+            show: true
+        };
+        $scope.uploadFiles(username, repo, branch, __basePath + '/themes/default', __basePath + '/themes/default/', index);
+    };
+
+    $scope.getUploadList = function(path) {
+        var i, list = file.readDir(path);
+
+        for (i = 0; i < list.length; i++) {
+            if (/^\./.test(list[i])) {
+                continue;
+            }
+
+            if (file.isDirectory(path + '/' + list[i])) {
+                $scope.getUploadList(path + '/' + list[i]);
+            } else {
+                $scope.uploadList.push({
+                    name: path + '/' + list[i],
+                    stat: 0
+                });
+            }
+        }
+    };
+
+    $scope.uploadFiles = function(username, repo, branch, path, basePath, index) {
+        $scope.uploadList = [];
+        $scope.getUploadList(path);
+
+        var content, filename;
+
+        $scope.uploadList.forEach(function(item) {
+            filename = item.name.substr(basePath.length);
+            content = file.read(item.name);
+            if (filename === '_config.yml') {
+                if (branch === 'gh-pages') {
+                    content += '\nbaseurl: "/' + repo + '"';
+                } else {
+                    content += '\nbaseurl: ""';
+                }
+            }
+
+            content = new Buffer(content, 'binary').toString('base64');
+            
+            github.ng(github.gitdata.createBlob, {
+                user: username,
+                repo: repo,
+                content: content,
+                encoding: 'base64'
+            }).then(function(gitInfo) {
+                item.stat = 1;
+                item.sha = gitInfo.sha;
+                $scope.checkUploadList(username, repo, branch, basePath, index);
+            }, function() {
+                item.stat = 2;
+                $scope.uploadFile(username, repo, branch, basePath, content, item, index);
+            });
+        });
+    };
+
+    $scope.uploadFile = function(username, repo, branch, basePath, content, info, index) {
+        if (info.stat > 3) {
+            $scope.checkUploadList(username, repo, branch, basePath, index);
+            return;
+        } else {
+            github.ng(github.gitdata.createBlob, {
+                user: username,
+                repo: repo,
+                content: content,
+                encoding: 'base64'
+            }).then(function(gitInfo) {
+                info.stat = 1;
+                info.sha = gitInfo.sha;
+                $scope.checkUploadList(username, repo, branch, basePath, index);
+            }, function() {
+                info.stat++;
+                $scope.uploadFile(username, repo, branch, basePath, content, info, index);
+            });
+        }
+    };
+
+    $scope.checkUploadList = function(username, repo, branch, basePath, index) {
+        var i, complete = true, list = $scope.uploadList;
+
+        for (i = 0; i < list.length; i++) {
+            if (list[i].stat === 0 || list[i].stat > 1 && list[i].stat < 4) {
+                complete = false;
+                break;
+            }
+        }
+
+        if (complete) {
+            var tree = [];
+            list.forEach(function(info) {
+                tree.push({
+                    path: info.name.substr(basePath.length),
+                    mode: '100644',
+                    type: 'blob',
+                    sha: info.sha
+                });
+            });
+
+            github.ng(github.gitdata.createTree, {
+                user: username,
+                repo: repo,
+                tree: tree
+            }).then(function(info) {
+                var sha = info.sha;
+                $scope.getRef(username, repo, branch, function(headsSha) {
+                    $scope.createCommit(username, repo, branch, 'Set theme', sha, headsSha, index);
+                });
+            }, function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Create git data tree failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.$broadcast('showAccountBox', 'GitHub');
+                    }
+                }]);
+            });
+        }
+    };
+
+    $scope.getRef = function(username, repo, branch, callback) {
+        github.ng(github.gitdata.getReference, {
+            user: username,
+            repo: repo,
+            ref: 'heads/' + branch
+        }).then(function(info) {
+            callback(info.object.sha);
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Get path reference failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.$broadcast('showAccountBox', 'GitHub');
+                }
+            }]);
+        });
+    };
+
+    $scope.createCommit = function(username, repo, branch, message, tree, heads, index) {
+        github.ng(github.gitdata.createCommit, {
+            user: username,
+            repo: repo,
+            message: message,
+            tree: tree,
+            parents: [heads]
+        }).then(function(info) {
+            var sha = info.sha;
+
+            github.ng(github.gitdata.updateReference, {
+                user: username,
+                repo: repo,
+                ref: 'heads/' + branch,
+                sha: sha,
+                force: true
+            }).then(function() {
+                $scope.newPath[index] = false;
+                $scope.pathNameErr[index] = false;
+                $scope.pathName[index] = '';
+
+                $scope.addRepo(username, repo);
+
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Create path succeed!', 'succeed', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                    }
+                }]);
+            }, function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Set git head failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.$broadcast('showAccountBox', 'GitHub');
+                    }
+                }]);
+            });
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Create commit failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.$broadcast('showAccountBox', 'GitHub');
+                }
+            }]);
+        });
+    };
+    
     $scope.openWebPage = function(url) {
         shell.openExternal(url);
     };

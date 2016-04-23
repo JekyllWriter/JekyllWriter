@@ -8,6 +8,9 @@
                 <i class="arrow on ion-chevron-down"></i>
                 <ul class="repoList">
                     <li ng-repeat="repo in item.repos">{{ repo }}</li>
+                    <li ng-show="!!newPath[$index]">/<input type="text" ng-model="pathName[$index]"><i class="fa fa-check" ng-click="checkPath(item.username, $index)"></i><i class="fa fa-times" ng-click="showNewPath($index)"></i></li>
+                    <li ng-show="pathNameErr[$index]" class="error">Path name may only contains letters, numbers, dash and underscode.</li>
+                    <li ng-show="!newPath[$index]"><a href="#" ng-click="showNewPath($index)">Create new site</a></li>
                 </ul>
             </div>
         </li>
@@ -16,7 +19,7 @@
         <div>
             <input type="text" placeholder="Token" ng-model="githubAccount.token">
             <div>
-                <a href="#" ng-click="openWebPage('https://github.com/settings/tokens/new')">Create a new token</a>
+                <a href="#" ng-click="openWebPage('https://github.com/settings/tokens/new')">Create new token</a>
             </div>
         </div>
         <div>

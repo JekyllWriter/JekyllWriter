@@ -71,13 +71,25 @@ app.factory('storage', function() {
         return fs.unlinkSync(fileName);
     };
 
+    var isDirectory = function(path) {
+        var stat;
+
+        try {
+            stat = fs.statSync(path);
+            return stat.isDirectory();
+        } catch(e) {
+            return false;
+        }
+    };
+
     return {
         read: read,
         readDir: readDir,
         write: write,
         mkDir: mkDir,
         listFile: listFile,
-        deleteFile: deleteFile
+        deleteFile: deleteFile,
+        isDirectory: isDirectory
     }
 })
 .factory('savePost', function($rootScope, file, trim, today) {
