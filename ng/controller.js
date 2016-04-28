@@ -13,6 +13,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         layout: 'post'
     };
 
+    $rootScope.siteConfig = null;
+
+    $rootScope.siteConfigSHA = null;
+
     $rootScope.loading = {
         show: false
     };
@@ -415,6 +419,8 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
     $scope.changeAccount = function() {
         storage.set('account', $rootScope.account.value);
         $rootScope.postList = listPost();
+        $rootScope.siteConfig = null;
+        $rootScope.siteConfigSHA = null;
 
         $scope.getToken();
     };
@@ -529,7 +535,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
             user: username,
             repo: repo,
             content: new Buffer(content).toString('base64'),
-            ref: branch,
+            branch: branch,
             sha: sha,
             message: 'Update ' + trim($rootScope.postMeta.title),
             path: path
@@ -566,6 +572,85 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
 
     $rootScope.historyList = {
         value: []
+    };
+
+    $scope.getConfig = function() {
+        $scope.getToken();
+
+        if (!$scope.token) {
+            showMessageBox('Your current account is Public, please change to a GitHub account or add a new account to get site configuration.', 'info');
+            return;
+        }
+
+        if ($rootScope.siteConfig === null) {
+            $rootScope.loadingText = {
+                text: 'Fetching site configuration...'
+            };
+
+            $rootScope.loading = {
+                show: true
+            };
+        } else {
+            $rootScope.configBox = {
+                show: true
+            };
+            return;
+        }
+
+        var username = $rootScope.account.value.match(/^(.*?)[_$]/),
+            repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        github.ng(github.repos.getContent, {
+            user: username,
+            repo: repo,
+            path: '_config.yml',
+            ref: branch
+        }).then(function(config) {
+            $rootScope.siteConfigSHA = config.sha;
+            config = atob(config.content);
+            config = yaml.safeLoad(config);
+
+            for (var key in config) {
+                if (typeof(config[key]) === 'object') {
+                    config[key] = JSON.stringify(config[key]);
+                }
+            }
+            $rootScope.siteConfig = config;
+
+            $rootScope.loading = {
+                show: false
+            };
+
+            $rootScope.configBox = {
+                show: true
+            };
+        }, function() {
+            $rootScope.loading = {
+                show: true
+            };
+
+            showMessageBox('Fetching site configuration failed, please try again later.', 'error');
+        });
     };
 
     $scope.setProxy = function() {
@@ -2743,5 +2828,157 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
                 };
             }
         }]);
+    };
+})
+.controller('config', function($scope, $rootScope, github, showMessageBox, trim) {
+    $rootScope.configBox = {
+        show: false
+    };
+
+    $scope.token = '';
+
+    $scope.getToken = function() {
+        if (!$rootScope.account.value) {
+            $scope.token = '';
+            return;
+        }
+
+        $scope.token = '';
+
+        var i, username = $rootScope.account.value.match(/^(.*?)[_$]/);
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        for (i = 0; i < $rootScope.accounts.github.length; i++) {
+            if ($rootScope.accounts.github[i].username === username) {
+                $scope.token = $rootScope.accounts.github[i].token;
+                break;
+            }
+        }
+
+        if ($scope.token) {
+            github.authenticate({
+                type: 'oauth',
+                token: $scope.token
+            });
+        }
+    };
+
+    $scope.close = function() {
+        $rootScope.configBox = {
+            show: false
+        };
+    };
+
+    $scope.remove = function(configName) {
+        delete $rootScope.siteConfig[configName];
+    };
+
+    $scope.edit = function(configName) {
+        $('#config_' + configName).val($rootScope.siteConfig[configName]);
+        $('#configRow_' + configName).addClass('edit');
+        $('#config_' + configName).focus();
+    };
+
+    $scope.set = function(configName) {
+        $rootScope.siteConfig[configName] = $('#config_' + configName).val();
+        $('#configRow_' + configName).removeClass('edit');
+    };
+
+    $scope.cancel = function(configName) {
+        $('#configRow_' + configName).removeClass('edit');
+    };
+
+    $scope.insert = function() {
+        var configName = trim($('#NewConfigName').val()),
+            configValue = trim($('#NewConfigValue').val());
+
+        configName = configName.replace(/[^a-z0-9_]/ig, '_');
+        if (configName && configValue) {
+            $rootScope.siteConfig[configName] = configValue;
+            $('.newConfig').removeClass('add');
+            $('#NewConfigName').val('');
+            $('#NewConfigValue').val('');
+        };
+    };
+
+    $scope.cancelNew = function() {
+        $('.newConfig').removeClass('add');
+        $('#NewConfigName').val('');
+        $('#NewConfigValue').val('');
+    };
+
+    $scope.addNew = function() {
+        $('.newConfig').addClass('add');
+    };
+
+    $scope.save = function() {
+        $scope.getToken();
+
+        var username = $rootScope.account.value.match(/^(.*?)[_$]/),
+            repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        var key, config = {};
+        for (key in $rootScope.siteConfig) {
+            try {
+                config[key] = JSON.parse($rootScope.siteConfig[key]);
+            } catch(e) {
+                config[key] = $rootScope.siteConfig[key];
+            }
+        }
+        config = '# Created by Jekyll Writer\n' + yaml.safeDump(config);
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        $rootScope.loadingText = {
+            text: 'Updating site configuration...'
+        };
+
+        github.ng(github.repos.updateFile, {
+            user: username,
+            repo: repo,
+            content: new Buffer(config).toString('base64'),
+            branch: branch,
+            sha: $rootScope.siteConfigSHA,
+            message: 'Update Configuration',
+            path: '_config.yml'
+        }).then(function(res) {
+            $rootScope.loading = {
+                show: false
+            };
+            $rootScope.siteConfigSHA = res.sha;
+            showMessageBox('Update site configuration succeed!', 'succeed');
+        }, function(err) {
+            $rootScope.loading = {
+                show: false
+            };
+            showMessageBox('Update site configuration failed, please try again later.', 'error');
+        });
     };
 });
