@@ -3108,6 +3108,13 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
     };
 
     $scope.applyTheme = function(linkid) {
+        $scope.getToken();
+
+        if (!$scope.token) {
+            showMessageBox('Your current account is Public, please change to a GitHub account or add a new account to apply theme.', 'info');
+            return;
+        }
+
         $rootScope.loadingText = {
             text: 'Downloading theme...'
         };
@@ -3203,7 +3210,6 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
             stat: 0
         });
 
-        $scope.getToken();
         $scope.getCurrentTree();
     });
 
