@@ -1,0 +1,18 @@
+<div class="theme">
+    <div class="titlebar"><i class="fa fa-paint-brush"></i>Theme<i class="icon ion-ios-close-empty" ng-click="close()"></i></div>
+    <div class="themeList">
+        <div class="scrollArea">
+            <div class="item" ng-repeat="item in list">
+                <img class="screenshot" ng-src="https://go.jekyllwriter.com/jump?LinkId={{ item.screenshot }}">
+                <div class="links">
+                    by <a href="#" ng-click="openWebPage('https://go.jekyllwriter.com/jump?LinkId=' + item.home)">{{ item.author }}</a>
+                </div>
+                <div class="links">
+                    <a href="#" ng-click="openWebPage('http://theme.jekyllwriter.com/' + item.name)">Preview</a> | <a href="#" ng-click="applyTheme(item.linkid)">Apply</a>
+                </div>
+            </div>
+            <div ng-show="!list.length && !err" class="loadingTheme">Loading online theme list...</div>
+            <div ng-show="!!err" class="loadingError">We meet a problem when load online theme :( <a href="#" ng-click="load()">try again</a></div>
+        </div>
+    </div>
+</div>

@@ -3,15 +3,18 @@ var electron = require('electron'),
     remote = require('remote'),
     shell = require("shell"),
     fs = require('fs'),
+    https = require('https');
     yaml = require('js-yaml'),
     jQuery = $ = require('jQuery'),
     kramed = require('kramed'),
     GitHubApi = require("github"),
-    CryptoJS = require('crypto-js');
+    CryptoJS = require('crypto-js'),
+    AdmZip = require('adm-zip');
 
 /* Path */
 const ipcRenderer = require('electron').ipcRenderer;
 _userdata = ipcRenderer.sendSync('getUserDataDir');
+_temp = ipcRenderer.sendSync('getTempDir');
 
 /* Context Menu */
 const Menu = remote.Menu;

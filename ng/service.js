@@ -40,9 +40,13 @@ app.factory('storage', function() {
         return fs.readdirSync(path);
     };
 
-    var write = function(fileName, data) {
+    var write = function(fileName, data, raw) {
         fs.closeSync(fs.openSync(fileName, 'w'));
-        return fs.writeFileSync(fileName, data, 'utf8');
+        if (raw) {
+            return fs.writeFileSync(fileName, data, 'binary');
+        } else {
+            return fs.writeFileSync(fileName, data, 'utf8');
+        }
     };
 
     var mkDir = function(path) {

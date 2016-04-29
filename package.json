@@ -16,7 +16,8 @@
     "kramed": "~0.5.5",
     "github": "~0.2.4",
     "github-markdown-css": "~2.1.1",
-    "mathjax": "2.5.1"
+    "mathjax": "~2.5.1",
+    "adm-zip": "~0.4.7"
   },
   "devDependencies": {
     "electron-packager": "^5.1.1"

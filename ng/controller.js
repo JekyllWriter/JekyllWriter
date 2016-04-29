@@ -17,6 +17,8 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
 
     $rootScope.siteConfigSHA = null;
 
+    $rootScope.themeList = null;
+
     $rootScope.loading = {
         show: false
     };
@@ -334,7 +336,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         $('.newMeta').addClass('add');
     };
 })
-.controller('menubar', function($scope, $rootScope, storage, today, trim, savePost, listPost, github, showMessageBox, closeMessageBox) {
+.controller('menubar', function($scope, $rootScope, $http, storage, today, trim, savePost, listPost, github, showMessageBox, closeMessageBox) {
     $scope.token = '';
 
     $scope.getToken = function() {
@@ -651,6 +653,23 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
 
             showMessageBox('Fetching site configuration failed, please try again later.', 'error');
         });
+    };
+
+    $scope.loadThemes = function() {
+        $rootScope.themeBox = {
+            show: true
+        };
+
+        if ($rootScope.themeList === null) {
+            $http.get('https://market.jekyllwriter.com/theme/list').then(function(response) {
+                $rootScope.themeList = response.data;
+                $rootScope.$broadcast('themeList', response.data);
+            }, function(err) {
+                $rootScope.$broadcast('themeListError', err);
+            });
+        } else {
+            $rootScope.$broadcast('themeList', $rootScope.themeList);
+        }
     };
 
     $scope.setProxy = function() {
@@ -2083,6 +2102,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
                 $scope.pathName[index] = '';
 
                 $scope.addRepo(username, repo);
+                storage.set('accounts', $rootScope.accounts);
 
                 $rootScope.loading = {
                     show: false
@@ -2836,6 +2856,19 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
     };
 
     $scope.token = '';
+    $scope.setThemeConfig = false;
+
+    $scope.$on('setThemeConfig', function() {
+        $scope.setThemeConfig = true;
+    });
+
+    $scope.$on('setSiteConfig', function() {
+        $scope.setThemeConfig = false;
+    });
+
+    $scope.$on('setConfig', function(event, config) {
+        $rootScope.siteConfig = config;
+    });
 
     $scope.getToken = function() {
         if (!$rootScope.account.value) {
@@ -2872,6 +2905,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         $rootScope.configBox = {
             show: false
         };
+
+        if ($scope.setThemeConfig) {
+            $rootScope.$broadcast('getTempConfig');
+        }
     };
 
     $scope.remove = function(configName) {
@@ -2917,6 +2954,25 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
     };
 
     $scope.save = function() {
+        if ($scope.setThemeConfig) {
+            var key, config = {};
+            for (key in $rootScope.siteConfig) {
+                try {
+                    config[key] = JSON.parse($rootScope.siteConfig[key]);
+                } catch(e) {
+                    config[key] = $rootScope.siteConfig[key];
+                }
+            }
+            config = btoa('# Created by Jekyll Writer\n' + yaml.safeDump(config));
+            $rootScope.$broadcast('saveThemeConfig', config);
+
+            $rootScope.configBox = {
+                show: false
+            };
+
+            return;
+        }
+
         $scope.getToken();
 
         var username = $rootScope.account.value.match(/^(.*?)[_$]/),
@@ -2979,6 +3035,375 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
                 show: false
             };
             showMessageBox('Update site configuration failed, please try again later.', 'error');
+        });
+    };
+})
+.controller('theme', function($scope, $rootScope, $http, file, github, showMessageBox, closeMessageBox) {
+    var tempSiteConfig = null;
+
+    $scope.list = [];
+    $scope.err = '';
+    $scope.files = [];
+
+    $scope.token = '';
+
+    $scope.getToken = function() {
+        if (!$rootScope.account.value) {
+            $scope.token = '';
+            return;
+        }
+
+        $scope.token = '';
+
+        var i, username = $rootScope.account.value.match(/^(.*?)[_$]/);
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        for (i = 0; i < $rootScope.accounts.github.length; i++) {
+            if ($rootScope.accounts.github[i].username === username) {
+                $scope.token = $rootScope.accounts.github[i].token;
+                break;
+            }
+        }
+
+        if ($scope.token) {
+            github.authenticate({
+                type: 'oauth',
+                token: $scope.token
+            });
+        }
+    };
+
+    $scope.$on('themeList', function(event, list) {
+        $scope.list = list;
+    });
+
+    $scope.$on('themeListError', function(event, err) {
+        $scope.err = err;
+    });
+
+    $scope.openWebPage = function(url) {
+        shell.openExternal(url);
+    };
+
+    $scope.close = function() {
+        $rootScope.themeBox = {
+            show: false
+        };
+    };
+
+    $scope.load = function() {
+        $scope.err = '';
+        $scope.list = [];
+
+        $http.get('https://market.jekyllwriter.com/theme/list').then(function(response) {
+            $scope.list = response.data;
+        }, function(err) {
+            $scope.err = err;
+        });
+    };
+
+    $scope.applyTheme = function(linkid) {
+        $rootScope.loadingText = {
+            text: 'Downloading theme...'
+        };
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        var basePath = _temp + 'Jekyll Writer/theme/';
+        var path = basePath + linkid + '.zip';
+        file.mkDir(basePath);
+        var themeZip = fs.createWriteStream(path);
+
+        $http.get('https://go.jekyllwriter.com/jump?LinkId=' + linkid, {responseType: 'arraybuffer'}).then(function(response) {
+            file.write(path, new Buffer(response.data), true);
+            $scope.readZip(path);
+        }, function(err) {
+            showMessageBox('Download theme failed, please try again later.', 'error');
+        });
+    };
+
+    $scope.readZip = function(zipPath) {
+        $rootScope.loadingText = {
+            text: 'Extracting files...'
+        };
+
+        var repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        var path, filename, config;
+        var zip = new AdmZip(zipPath);
+        var zipEntries = zip.getEntries();
+
+        $scope.files = [];
+
+        zipEntries.forEach(function(zipEntry) {
+            path = zipEntry.entryName.match(/^[^\/]+\/(.*)$/)[1];
+            if (path && !/\/$/.test(path)) {
+                if (path === '_config.yml') {
+                    config = yaml.safeLoad(zipEntry.getData().toString('utf8'));
+                    config.url = '';
+                    if (branch === 'master') {
+                        config.baseurl = '';
+                    } else {
+                        config.baseurl = '/' + repo;
+                    }
+                } else {
+                    $scope.files.push({
+                        path: path,
+                        content: zipEntry.getData().toString('base64'),
+                        stat: 0
+                    });
+                }
+            }
+        });
+
+        $rootScope.loading = {
+            show: false
+        };
+
+        $rootScope.themeBox = {
+            show: false
+        };
+
+        tempSiteConfig = $rootScope.siteConfig;
+        $rootScope.siteConfig = config;
+        $rootScope.$broadcast('setThemeConfig');
+
+        $rootScope.configBox = {
+            show: true
+        };
+    };
+
+    $scope.$on('saveThemeConfig', function(event, content) {
+        $rootScope.siteConfig = tempSiteConfig;
+
+        $scope.files.push({
+            path: '_config.yml',
+            content: content,
+            stat: 0
+        });
+
+        $scope.getToken();
+        $scope.getCurrentTree();
+    });
+
+    $scope.$on('getTempConfig', function() {
+        $rootScope.$broadcast('setConfig', tempSiteConfig);
+    });
+
+    $scope.getCurrentTree = function() {
+        $rootScope.loadingText = {
+            text: 'Uploading theme...'
+        };
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        var username = $rootScope.account.value.match(/^(.*?)[_$]/),
+            repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        github.ng(github.gitdata.getReference, {user: username, repo: repo, ref: 'heads/' + branch}).then(function(info) {
+            $scope.uploadFiles(username, repo, branch, info.object.sha);
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Get branch heads SHA failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.themeBox = {
+                        show: true
+                    };
+                }
+            }]);
+        });
+    };
+
+    $scope.uploadFiles = function(username, repo, branch, baseTree) {
+        $scope.files.forEach(function(item) {
+            github.ng(github.gitdata.createBlob, {
+                user: username,
+                repo: repo,
+                content: item.content,
+                encoding: 'base64'
+            }).then(function(gitInfo) {
+                item.stat = 1;
+                item.sha = gitInfo.sha;
+                $scope.checkUploadList(username, repo, branch, baseTree);
+            }, function() {
+                item.stat = 2;
+                $scope.uploadFile(username, repo, branch, item, baseTree);
+            });
+        });
+    };
+
+    $scope.uploadFile = function(username, repo, branch, item, baseTree) {
+        if (item.stat > 3) {
+            $scope.checkUploadList(username, repo, branch, baseTree);
+            return;
+        } else {
+            github.ng(github.gitdata.createBlob, {
+                user: username,
+                repo: repo,
+                content: item.content,
+                encoding: 'base64'
+            }).then(function(gitInfo) {
+                item.stat = 1;
+                item.sha = gitInfo.sha;
+                $scope.checkUploadList(username, repo, branch, item, baseTree);
+            }, function() {
+                item.stat++;
+                $scope.uploadFile(username, repo, branch, item, baseTree);
+            });
+        }
+    };
+
+    $scope.checkUploadList = function(username, repo, branch, item, baseTree) {
+        var i, complete = true, list = $scope.files;
+
+        for (i = 0; i < list.length; i++) {
+            if (list[i].stat === 0 || list[i].stat > 1 && list[i].stat < 4) {
+                complete = false;
+                break;
+            }
+        }
+
+        if (complete) {
+            var tree = [];
+            list.forEach(function(info) {
+                tree.push({
+                    path: info.path,
+                    mode: '100644',
+                    type: 'blob',
+                    sha: info.sha
+                });
+            });
+
+            github.ng(github.gitdata.createTree, {
+                user: username,
+                repo: repo,
+                tree: tree,
+                base_tree: baseTree
+            }).then(function(info) {
+                var sha = info.sha;
+                $scope.createCommit(username, repo, branch, 'Set theme', sha, baseTree);
+            }, function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Create git data tree failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.themeBox = {
+                            show: true
+                        };
+                    }
+                }]);
+            });
+        }
+    };
+
+    $scope.createCommit = function(username, repo, branch, message, tree, heads) {
+        github.ng(github.gitdata.createCommit, {
+            user: username,
+            repo: repo,
+            message: message,
+            tree: tree,
+            parents: [heads]
+        }).then(function(info) {
+            var sha = info.sha;
+
+            github.ng(github.gitdata.updateReference, {
+                user: username,
+                repo: repo,
+                ref: 'heads/' + branch,
+                sha: sha,
+                force: true
+            }).then(function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Set theme succeed!', 'succeed', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                    }
+                }]);
+            }, function() {
+                $rootScope.loading = {
+                    show: false
+                };
+
+                showMessageBox('Set git head failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.themeBox = {
+                            show: true
+                        };
+                    }
+                }]);
+            });
+        }, function() {
+            $rootScope.loading = {
+                show: false
+            };
+
+            showMessageBox('Create commit failed, please try again later.', 'error', [{
+                text: 'OK',
+                action: function() {
+                    closeMessageBox();
+                    $rootScope.themeBox = {
+                        show: true
+                    };
+                }
+            }]);
         });
     };
 });

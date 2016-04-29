@@ -2004,7 +2004,7 @@ main {
 }
 
 
-/* All Meta Box */
+/* Config Box */
 .config {
     position: fixed;
     width: 500px;
@@ -2227,6 +2227,94 @@ main {
 
 .config>.configtable>.scrollArea td:hover .container {
     border-color: #ccc;
+}
+
+/* Theme Box */
+/* All Meta Box */
+.theme {
+    position: fixed;
+    width: 660px;
+    height: 70%;
+    left: 50%;
+    margin-left: -330px;
+    top: 15%;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+.theme>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+.theme>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+.theme>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+.theme>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+.theme>.themeList {
+    height: 100%;
+    padding-top: 32px;
+    margin-top: -32px;
+    box-sizing: border-box;
+}
+
+.theme>.themeList>.scrollArea {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.theme>.themeList>.scrollArea>.item {
+    padding: 10px;
+    float: left;
+}
+
+.theme>.themeList>.scrollArea>.item>.screenshot {
+    -webkit-user-drag: none;
+    border: 1px solid #eee;
+    width: 200px;
+    height: 150px;
+}
+
+.theme>.themeList>.scrollArea>.item>.links {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.theme>.themeList>.scrollArea>.item>.links>a,
+.theme>.themeList>.scrollArea>.loadingError>a {
+    text-decoration: none;
+    color: #4285f4;
+}
+
+.theme>.themeList>.scrollArea>.item>.links>a:hover,
+.theme>.themeList>.scrollArea>.loadingError>a:hover {
+    text-decoration: underline;
+}
+
+.theme>.themeList>.scrollArea>.loadingTheme {
+    font-size: 16px;
+    text-align: center;
+    color: gray;
+    padding: 10px;
 }
 
 /* Print */

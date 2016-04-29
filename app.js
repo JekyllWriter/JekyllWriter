@@ -13,6 +13,10 @@ ipcMain.on('getUserDataDir', function(event) {
     event.returnValue = app.getPath('userData').replace(/\\/g, '/');
 });
 
+ipcMain.on('getTempDir', function(event) {
+    event.returnValue = app.getPath('temp').replace(/\\/g, '/');
+});
+
 try {
     proxyConfig = fs.readFileSync(__dirname + '/proxy.conf');
     proxyConfig = JSON.parse(proxyConfig);
