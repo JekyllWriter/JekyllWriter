@@ -3278,7 +3278,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
             }).then(function(gitInfo) {
                 item.stat = 1;
                 item.sha = gitInfo.sha;
-                $scope.checkUploadList(username, repo, branch, baseTree);
+                $scope.checkUploadList(username, repo, branch, item, baseTree);
             }, function() {
                 item.stat = 2;
                 $scope.uploadFile(username, repo, branch, item, baseTree);
