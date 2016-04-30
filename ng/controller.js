@@ -648,7 +648,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
             };
         }, function() {
             $rootScope.loading = {
-                show: true
+                show: false
             };
 
             showMessageBox('Fetching site configuration failed, please try again later.', 'error');
