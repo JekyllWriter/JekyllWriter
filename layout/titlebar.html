@@ -1,7 +1,7 @@
-<span class="logo">
+<span class="logo" data-dbldisabled>
     <img src="images/logo64.png" width="32" height="32">
 </span>
-<ul class="menu">
+<ul class="menu" data-dbldisabled>
     <li ng-repeat="item in menu | filter:{display: true}">
         <i class="fa {{ item.class }}" ng-click="doAction(item.title)" title="{{ item.title }}"></i>
     </li>
@@ -18,7 +18,7 @@
     </li>
 </ul>
 <span class="title"><span class="postTitle">{{ postMeta.title || 'Untitled' }}</span> - Jekyll Writer<span ng-show="unsavedChanges()"> (unsaved) <i class="unsaved fa fa-exclamation-triangle"></i></span></span>
-<ul class="right">
+<ul class="right" data-dbldisabled>
     <li><i class="icon ion-ios-minus-empty" ng-click="minimize()"></i></li>
     <li><i class="icon ion-ios-plus-empty" ng-click="maximize()"></i></li>
     <li><i class="icon ion-ios-close-empty" ng-click="closeConfirm()"></i></li>

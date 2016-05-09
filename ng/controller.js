@@ -1,4 +1,4 @@
-app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, savePost, listPost, closeMessageBox, showMessageBox) {
+app.controller('header', function($scope, $rootScope, $timeout, $sce, today, storage, savePost, listPost, closeMessageBox, showMessageBox) {
     $rootScope.account = {
         value: storage.get('account') || null
     };
@@ -131,7 +131,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         };
 
         $('#metaSlug').val('');
-        $('#metaDate').datepicker('update', '');
+        $('#metaDate').datepicker('update', today());
 
         $timeout(function() {
             autosize.update($('#editorContent'));
@@ -226,7 +226,15 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         remote.getCurrentWindow().minimize();
     };
 
-    $scope.maximize = function() {
+    $scope.maximize = function(event) {
+        if (event) {
+            for (var i = 0; i < event.path.length; i++) {
+                if ($(event.path[i]).attr('data-dbldisabled') !== undefined) {
+                    return;
+                }
+            }
+        }
+
         if (remote.getCurrentWindow().isMaximized()) {
             remote.getCurrentWindow().unmaximize();
         } else {
@@ -280,6 +288,8 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         $('#metaDate').datepicker({
             format: 'yyyy-mm-dd'
         });
+
+        $('#metaDate').datepicker('update', today());
     };
 
     $scope.showAllMeta = function() {
@@ -2704,8 +2714,13 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, storage, s
         $rootScope.postContent.value = before + pic + after;
 
         $timeout(function() {
-            $('#editorContent')[0].selectionStart = start + pic.length;
-            $('#editorContent')[0].selectionEnd = start + pic.length;
+            if (url === 'http://') {
+                $('#editorContent')[0].selectionStart = start + pic.length - 8;
+                $('#editorContent')[0].selectionEnd = start + pic.length - 1;
+            } else {
+                $('#editorContent')[0].selectionStart = start + pic.length;
+                $('#editorContent')[0].selectionEnd = start + pic.length;
+            }
 
             autosize.update($('#editorContent'));
 
