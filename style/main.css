@@ -2229,6 +2229,82 @@ main {
     border-color: #ccc;
 }
 
+/* Domain Box */
+#domain {
+    position: fixed;
+    width: 500px;
+    height: 100;
+    left: 50%;
+    margin-left: -250px;
+    top: 160px;
+    background: white;
+    z-index: 80;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.35);
+}
+
+
+#domain>.titlebar {
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 32px;
+    position: relative;
+}
+
+#domain>.titlebar>.fa {
+    margin-right: 10px;
+}
+
+#domain>.titlebar>.icon {
+    position: absolute;
+    right: 0;
+    padding: 0 15px;
+    top: 0;
+    font-size: 24px;
+    line-height: 32px;
+    transition: all 0.2s;
+}
+
+#domain>.titlebar>.icon:hover {
+    color: white;
+    background: #cb3837;
+}
+
+#domain>.domainBody {
+    padding: 10px;
+    font-size: 0;
+}
+
+#domain>.domainBody>input {
+    width: 380px;
+    height: 30px;
+    line-height: 30px;
+    border: #eee 1px solid;
+    background: white;
+    padding: 0 10px;
+    box-sizing: border-box;
+    vertical-align: top;
+    outline: none;
+    font-size: 12px;
+}
+
+#domain>.domainBody>button {
+    width: 90px;
+    height: 30px;
+    line-height: 30px;
+    margin-left: 10px;
+    text-align: center;
+    border: #eee 1px solid;
+    background: white;
+    padding: 0;
+    vertical-align: top;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+#domain>.domainBody>button:hover {
+    background: #eee;
+}
+
 /* Theme Box */
 /* All Meta Box */
 .theme {
@@ -2310,7 +2386,8 @@ main {
     text-decoration: underline;
 }
 
-.theme>.themeList>.scrollArea>.loadingTheme {
+.theme>.themeList>.scrollArea>.loadingTheme,
+.theme>.themeList>.scrollArea>.loadingError {
     font-size: 16px;
     text-align: center;
     color: gray;

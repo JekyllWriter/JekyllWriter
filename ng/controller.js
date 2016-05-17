@@ -17,6 +17,11 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
 
     $rootScope.siteConfigSHA = null;
 
+    $rootScope.domainConfig = {
+        value: null,
+        sha: null
+    }
+
     $rootScope.themeList = null;
 
     $rootScope.loading = {
@@ -67,7 +72,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             };
             //showMessageBox('Save post succeed!', 'succeed');
         } else {
-            showMessageBox(res.error, 'error');
+            showMessageBox('Save post failed, please try again later.', 'error');
         }
     };
 
@@ -88,7 +93,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                             $('#metaDate').val(), $rootScope.account.value);
 
                         if (res.code === 1) {
-                            showMessageBox(res.error, 'error');
+                            showMessageBox('Save post failed, please try again later.', 'error');
                         } else {
                             $scope.newPost();
                             closeMessageBox();
@@ -252,7 +257,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                             $('#metaDate').val(), $rootScope.account.value);
 
                         if (res.code === 1) {
-                            showMessageBox(res.error, 'error');
+                            showMessageBox('Save post failed, please try again later.', 'error');
                         } else {
                             $scope.close();
                         } 
@@ -433,6 +438,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         $rootScope.postList = listPost();
         $rootScope.siteConfig = null;
         $rootScope.siteConfigSHA = null;
+        $rootScope.domainConfig = {
+            value: null,
+            sha: null
+        }
 
         $scope.getToken();
     };
@@ -490,7 +499,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 $('#metaDate').val(), $rootScope.account.value);
 
         if (res.code === 1) {
-            showMessageBox(res.error, 'error');
+            showMessageBox('Save post failed, please try again later.', 'error');
             return;
         }
 
@@ -517,11 +526,11 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
     $scope.create = function(username, repo, branch, path) {
         var content = '---\n' + yaml.safeDump($rootScope.postMeta) + '---\n' + $rootScope.postContent.value;
 
-        github.ng(github.repos.createContent, {
+        github.ng(github.repos.createFile, {
             user: username,
             repo: repo,
             content: new Buffer(content).toString('base64'),
-            ref: branch,
+            branch: branch,
             message: 'Publish ' + trim($rootScope.postMeta.title),
             path: path
         }).then(function(res) {
@@ -535,7 +544,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 show: false
             };
 
-            showMessageBox(err.message, 'error');
+            showMessageBox('Publish post failed, please try again later.', 'error');
         });
     };
 
@@ -560,7 +569,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             $rootScope.loading = {
                 show: false
             };
-            showMessageBox(err.message, 'error');
+            showMessageBox('Publish post failed, please try again later.', 'error');
         });
     };
 
@@ -576,7 +585,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             if (err.code === 404) {
                 callback();
             } else {
-                showMessageBox(err.message, 'error');
+                $rootScope.loading = {
+                    show: true
+                };
+                showMessageBox('Get post SHA failed, please try again later.', 'error');
             }
         });
     };
@@ -662,6 +674,87 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             };
 
             showMessageBox('Fetching site configuration failed, please try again later.', 'error');
+        });
+    };
+
+    $scope.getDomain = function() {
+        $scope.getToken();
+
+        if (!$scope.token) {
+            showMessageBox('Your current account is Public, please change to a GitHub account or add a new account to get domain configuration.', 'info');
+            return;
+        }
+
+        if ($rootScope.domainConfig.value === null) {
+            $rootScope.loadingText = {
+                text: 'Fetching domain configuration...'
+            };
+
+            $rootScope.loading = {
+                show: true
+            };
+        } else {
+            $rootScope.domainBox = {
+                show: true
+            };
+            return;
+        }
+
+        var username = $rootScope.account.value.match(/^(.*?)[_$]/),
+            repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        github.ng(github.repos.getContent, {
+            user: username,
+            repo: repo,
+            path: 'CNAME',
+            ref: branch
+        }).then(function(domain) {
+            $rootScope.domainConfig.sha = domain.sha;
+            domain = atob(domain.content);
+
+            $rootScope.domainConfig.value = domain;
+
+            $rootScope.loading = {
+                show: false
+            };
+
+            $rootScope.domainBox = {
+                show: true
+            };
+        }, function(error) {
+            $rootScope.loading = {
+                show: false
+            };
+
+            if (error.status === 404) {
+                $rootScope.domainConfig.value = '';
+
+                $rootScope.domainBox = {
+                    show: true
+                };
+            } else {
+                showMessageBox('Fetching domain configuration failed, please try again later.', 'error');
+            }
         });
     };
 
@@ -753,7 +846,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 show: false
             };
 
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get commit failed, please try again later.', 'error');
         });
     };
 
@@ -803,7 +896,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 show: false
             };
 
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get commit failed, please try again later.', 'error');
         });
     };
 })
@@ -1283,7 +1376,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                             $('#metaDate').val(), $rootScope.account.value);
 
                         if (res.code === 1) {
-                            showMessageBox(res.error, 'error');
+                            showMessageBox('Save post failed, please try again later.', 'error');
                         } else {
                             $scope.openPost(fileName, domain);
                             closeMessageBox();
@@ -1388,7 +1481,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 $rootScope.loading = {
                     show: false
                 };
-                showMessageBox(err.message, 'error');
+                showMessageBox('Get post content failed, please try again later.', 'error');
             }
         });
     };
@@ -1491,10 +1584,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
 
                 callback();
             }, function(err) {
-                showMessageBox(err.message, 'error');
+                showMessageBox('Get post content failed, please try again later.', 'error');
             });
         } catch(err) {
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get post content failed, please try again later.', 'error');
         }
     }
 
@@ -1588,7 +1681,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 show: false
             };
 
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get history list failed, please try again later.', 'error');
         });
     };
 })
@@ -1842,7 +1935,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             text: 'Initial repository...'
         };
 
-        github.ng(github.repos.createContent, {
+        github.ng(github.repos.createFile, {
             user: username,
             repo: repo,
             path: 'README.md',
@@ -2246,7 +2339,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             $rootScope.loading = {
                 show: false
             };
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get user information failed, please try again later.', 'error');
         });
     };
 
@@ -2275,7 +2368,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 show: false
             };
 
-            showMessageBox(err.message, 'error');
+            showMessageBox('Get repositories failed, please try again later.', 'error');
         });
     };
 
@@ -2343,7 +2436,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     show: false
                 };
 
-                showMessageBox(err.message, 'error');
+                showMessageBox('Get repository content failed, please try again later.', 'error');
             } else {
                 $scope.checkJekyllRepo(username, repoList, page, index + 1);
             }
@@ -2530,7 +2623,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     show: false
                 };
 
-                showMessageBox(err.message, 'error');
+                showMessageBox('Get Dropbox token failed, please try again later.', 'error');
             } else {
                 $rootScope.accounts.dropbox.token = res.access_token;
                 $scope.getDropboxUserInfo();
@@ -2549,7 +2642,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     show: false
                 };
 
-                showMessageBox(err.message, 'error');
+                showMessageBox('Get Dropbox user information failed, please try again later.', 'error');
             } else {
                 $rootScope.accounts.dropbox.id = res.uid;
                 $rootScope.accounts.dropbox.username = res.display_name;
@@ -2660,7 +2753,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     show: false
                 };
 
-                showMessageBox(err, 'error');
+                showMessageBox('Upload file to Dropbox failed, please try again later.', 'error');
             } else {
                 $scope.insert(title, res.url);
                 $('#imagePath').val('');
@@ -2683,7 +2776,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     show: false
                 };
 
-                showMessageBox(err, 'error');
+                showMessageBox('Upload file to Qiniu failed, please try again later.', 'error');
             } else {
                 $scope.insert(title, $rootScope.accounts.qiniu.baseUrl + res.key);
                 $('#imagePath').val('');
@@ -3426,5 +3519,177 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                 }
             }]);
         });
+    };
+})
+.controller('domain', function($scope, $rootScope, github, showMessageBox, closeMessageBox) {
+    $rootScope.domainBox = {
+        show: false
+    };
+
+    $scope.token = '';
+
+    $scope.getToken = function() {
+        if (!$rootScope.account.value) {
+            $scope.token = '';
+            return;
+        }
+
+        $scope.token = '';
+
+        var i, username = $rootScope.account.value.match(/^(.*?)[_$]/);
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        for (i = 0; i < $rootScope.accounts.github.length; i++) {
+            if ($rootScope.accounts.github[i].username === username) {
+                $scope.token = $rootScope.accounts.github[i].token;
+                break;
+            }
+        }
+
+        if ($scope.token) {
+            github.authenticate({
+                type: 'oauth',
+                token: $scope.token
+            });
+        }
+    };
+
+    $scope.close = function() {
+        $rootScope.domainBox = {
+            show: false
+        };
+    };
+
+    $scope.updateDomain = function() {
+        $rootScope.domainBox = {
+            show: false
+        };
+
+        $scope.getToken();
+
+        var username = $rootScope.account.value.match(/^(.*?)[_$]/),
+            repo = $rootScope.account.value.match(/^[^_]+_(.*)$/),
+            branch = 'gh-pages';
+
+        if (!username) {
+            username = $rootScope.account.value;
+        } else {
+            username = username[1];
+        }
+
+        if (!repo) {
+            var i;
+            for (i = 0; i < $rootScope.repos.length; i++) {
+                if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
+                    (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
+                    repo = $rootScope.repos[i].repo;
+                }
+            }
+            branch = 'master';
+        } else {
+            repo = repo[1];
+        }
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        $rootScope.loadingText = {
+            text: 'Updating domain configuration...'
+        };
+
+        if (!$rootScope.domainConfig.sha && !$rootScope.domainConfig.value) {
+            showMessageBox('Nothing to update.', 'info');
+        } else if (!$rootScope.domainConfig.value) {
+            github.ng(github.repos.deleteFile, {
+                user: username,
+                repo: repo,
+                branch: branch,
+                sha: $rootScope.domainConfig.sha,
+                message: 'Remove Domain Configuration',
+                path: 'CNAME'
+            }).then(function(res) {
+                $rootScope.loading = {
+                    show: false
+                };
+                $rootScope.domainConfig.sha = res.sha;
+                showMessageBox('Remove domain configuration succeed!', 'succeed');
+            }, function(err) {
+                $rootScope.loading = {
+                    show: false
+                };
+                showMessageBox('Remove domain configuration failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.domainBox = {
+                            show: true
+                        };
+                    }
+                }]);
+            });
+        } else if ($rootScope.domainConfig.sha) {
+            github.ng(github.repos.updateFile, {
+                user: username,
+                repo: repo,
+                content: new Buffer($rootScope.domainConfig.value).toString('base64'),
+                branch: branch,
+                sha: $rootScope.domainConfig.sha,
+                message: 'Update Domain Configuration',
+                path: 'CNAME'
+            }).then(function(res) {
+                $rootScope.loading = {
+                    show: false
+                };
+                $rootScope.domainConfig.sha = res.content.sha;
+                showMessageBox('Update domain configuration succeed!', 'succeed');
+            }, function(err) {
+                $rootScope.loading = {
+                    show: false
+                };
+                showMessageBox('Update domain configuration failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.domainBox = {
+                            show: true
+                        };
+                    }
+                }]);
+            });
+        } else {
+            github.ng(github.repos.createFile, {
+                user: username,
+                repo: repo,
+                content: new Buffer($rootScope.domainConfig.value).toString('base64'),
+                branch: branch,
+                message: 'Update Domain Configuration',
+                path: 'CNAME'
+            }).then(function(res) {
+                $rootScope.loading = {
+                    show: false
+                };
+                $rootScope.domainConfig.sha = res.content.sha;
+                showMessageBox('Update domain configuration succeed!', 'succeed');
+            }, function(err) {
+                $rootScope.loading = {
+                    show: false
+                };
+                showMessageBox('Update domain configuration failed, please try again later.', 'error', [{
+                    text: 'OK',
+                    action: function() {
+                        closeMessageBox();
+                        $rootScope.domainBox = {
+                            show: true
+                        };
+                    }
+                }]);
+            });
+        }
     };
 });
