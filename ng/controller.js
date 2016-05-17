@@ -3559,6 +3559,10 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         }
     };
 
+    $scope.openWebPage = function(url) {
+        shell.openExternal(url);
+    };
+
     $scope.close = function() {
         $rootScope.domainBox = {
             show: false

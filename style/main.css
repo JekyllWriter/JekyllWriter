@@ -1931,7 +1931,7 @@ main {
 #youtube {
     position: fixed;
     width: 500px;
-    height: 100;
+    height: 100px;
     left: 50%;
     margin-left: -250px;
     top: 160px;
@@ -2233,7 +2233,7 @@ main {
 #domain {
     position: fixed;
     width: 500px;
-    height: 100;
+    height: 120px;
     left: 50%;
     margin-left: -250px;
     top: 160px;
@@ -2303,6 +2303,21 @@ main {
 
 #domain>.domainBody>button:hover {
     background: #eee;
+}
+
+#domain>.domainBody>.domainHelp {
+    text-align: right;
+    margin-top: 8px;
+}
+
+#domain>.domainBody>.domainHelp>a {
+    line-height: 16px;
+    font-size: 12px;
+    color: #4285f4;
+}
+
+#domain>.domainBody>.domainHelp>a:hover {
+    text-decoration: underline;
 }
 
 /* Theme Box */
