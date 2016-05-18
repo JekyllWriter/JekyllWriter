@@ -1784,7 +1784,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         }, 100);
     };
 })
-.controller('account', function($scope, $rootScope, __basePath, file, storage, github, dropbox, showMessageBox, closeMessageBox) {
+.controller('account', function($scope, $rootScope, $http, __basePath, file, storage, github, dropbox, showMessageBox, closeMessageBox) {
     $rootScope.loading = {
         show: false
     };
@@ -2271,37 +2271,24 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         $scope.showAccountField = false;
     };
 
-    $scope.addGitHubAccount = function() {
-        var token = $scope.githubAccount.token,
-            repo = $scope.githubAccount.repo;
-
-        if (!token) {
-            return;
-        }
-
-        $scope.githubAccount = {
-            token: ''
-        };
-
-        $scope.showAccountField = false;
-
-        $rootScope.loadingText = {
-            text: 'Getting account information...'
-        };
-
-        $rootScope.loading = {
-            show: true
-        };
-
-        github.authenticate({
-            type: 'oauth',
-            token: token
-        });
-
-        github.ng(github.user.get, {}).then(function(userInfo) {
+    $scope.checkEmail = function(token, userInfo) {
+        if (!userInfo.email) {
             $rootScope.loading = {
                 show: false
             };
+            showMessageBox('You are not invited :(', 'info');
+            return;
+        }
+
+        $http.get('https://token.jekyllwriter.com/github?code=' + CryptoJS.MD5(userInfo.email.toLowerCase()).toString()).then(function(response) {
+            $rootScope.loading = {
+                show: false
+            };
+
+            if (!response.data.token || CryptoJS.MD5('Jekyll' + userInfo.email.toLowerCase() + 'Writer').toString() !== response.data.token) {
+                showMessageBox('You are not invited :(', 'info');
+                return;
+            }
 
             var i, existUser = false;
 
@@ -2335,6 +2322,43 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
                     closeMessageBox();
                 }
             }]);
+        }, function(err) {
+            $rootScope.loading = {
+                show: false
+            };
+            showMessageBox('Get user information failed, please try again later.', 'error');
+        });
+    };
+
+    $scope.addGitHubAccount = function() {
+        var token = $scope.githubAccount.token,
+            repo = $scope.githubAccount.repo;
+
+        if (!token) {
+            return;
+        }
+
+        $scope.githubAccount = {
+            token: ''
+        };
+
+        $scope.showAccountField = false;
+
+        $rootScope.loadingText = {
+            text: 'Getting account information...'
+        };
+
+        $rootScope.loading = {
+            show: true
+        };
+
+        github.authenticate({
+            type: 'oauth',
+            token: token
+        });
+
+        github.ng(github.user.get, {}).then(function(userInfo) {
+            $scope.checkEmail(token, userInfo);
         }, function(err) {
             $rootScope.loading = {
                 show: false
