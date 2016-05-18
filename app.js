@@ -63,7 +63,7 @@ app.on('ready', function() {
         icon: __dirname + '/images/logo512.png'
     });
 
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
 
