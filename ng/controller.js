@@ -2398,7 +2398,7 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         });
 
         github.ng(github.user.get, {}).then(function(userInfo) {
-            $scope.checkEmail(token, userInfo);
+            $scope.getUserInfo(token, userInfo);
         }, function(err) {
             $rootScope.loading = {
                 show: false
