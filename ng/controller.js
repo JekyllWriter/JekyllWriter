@@ -2330,6 +2330,46 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
         });
     };
 
+    $scope.getUserInfo = function(token, userInfo) {
+
+        $rootScope.loading = {
+            show: false
+        };
+
+        var i, existUser = false;
+
+        for (i = 0; i < $rootScope.accounts.github.length; i++) {
+            if ($rootScope.accounts.github[i].username === userInfo.login) {
+                $rootScope.accounts.github[i].token = token;
+                existUser = true;
+                break;
+            }
+        }
+
+        if (!existUser) {
+            $rootScope.accounts.github.push({
+                username: userInfo.login,
+                token: token,
+                repos: []
+            });
+        }
+
+        storage.set('accounts', $rootScope.accounts);
+
+        showMessageBox('Would you like to scan Jekyll repositories for this account?', 'help', [{
+            text: 'OK',
+            action: function() {
+                $scope.getRepoList(userInfo.login)
+                closeMessageBox();
+            }
+        }, {
+            text: 'No, I\'d like to do that later',
+            action: function() {
+                closeMessageBox();
+            }
+        }]);
+    };
+
     $scope.addGitHubAccount = function() {
         var token = $scope.githubAccount.token,
             repo = $scope.githubAccount.repo;
