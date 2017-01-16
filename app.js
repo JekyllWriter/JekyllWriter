@@ -1,13 +1,14 @@
-var app = require('app');
+var electron = require('electron');
+var app = electron.app
 var fs = require('fs');
 var http = require('http');
-var BrowserWindow = require('browser-window');
+var BrowserWindow = electron.BrowserWindow;
 var landingWindow = null;
 var mainWindow = null;
 var proxyConfig = null;
 var ses = null;
 
-const ipcMain = require('electron').ipcMain;
+const ipcMain = electron.ipcMain;
 
 ipcMain.on('getUserDataDir', function(event) {
     event.returnValue = app.getPath('userData').replace(/\\/g, '/');
@@ -63,7 +64,7 @@ app.on('ready', function() {
         icon: __dirname + '/images/logo512.png'
     });
 
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
 

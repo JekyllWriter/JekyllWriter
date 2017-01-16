@@ -1,7 +1,7 @@
 /* Requires */
 var electron = require('electron'),
-    remote = require('remote'),
-    shell = require("shell"),
+    remote = electron.remote,
+    shell = electron.shell,
     fs = require('fs'),
     https = require('https');
     yaml = require('js-yaml'),

@@ -3317,7 +3317,14 @@ app.controller('header', function($scope, $rootScope, $timeout, $sce, today, sto
             branch = 'gh-pages';
 
         if (!repo) {
-            var i;
+            var i, username = $rootScope.account.value.match(/^(.*?)[_$]/);
+
+            if (!username) {
+                username = $rootScope.account.value;
+            } else {
+                username = username[1];
+            }
+
             for (i = 0; i < $rootScope.repos.length; i++) {
                 if ((username + '.github.com').toLowerCase() === $rootScope.repos[i].repo.toLowerCase() ||
                     (username + '.github.io').toLowerCase() === $rootScope.repos[i].repo.toLowerCase()) {
