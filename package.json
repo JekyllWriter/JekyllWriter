@@ -20,14 +20,15 @@
     "adm-zip": "^0.4.7"
   },
   "devDependencies": {
-    "electron-packager": "^5.1.1"
+    "electron-packager": "^5.1.1",
+    "electron-zip-packager": "^4.0.1"
   },
   "scripts": {
     "start": "electron .",
-    "build-win": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=win32 --icon=images/logo512.ico --arch=x64 --version=0.35.4",
-    "build-win32": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=win32 --icon=images/logo512.ico --arch=ia32 --version=0.35.4",
-    "build-osx": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=darwin --icon=images/logo512.icns --arch=x64 --version=0.35.4",
-    "build-lin": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=linux --arch=x64 --version=0.35.4",
-    "build": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=all --icon=images/logo512 --arch=x64 --version=0.35.4"
+    "build-win": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=win32 --icon=images/logo512.ico --arch=x64 --electronVersion=1.4.14",
+    "build-win32": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=win32 --icon=images/logo512.ico --arch=ia32 --electronVersion=1.4.14",
+    "build-osx": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=darwin --icon=images/logo512.icns --arch=x64 --electronVersion=1.4.14",
+    "build-lin": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=linux --arch=x64 --electronVersion=1.4.14",
+    "build": "electron-zip-packager . \"Jekyll Writer\" --ignore=\"node_modules/electron-*|built|userdata|proxy.conf\" --out=built --platform=all --icon=images/logo512 --arch=x64 --electronVersion=1.4.14"
   }
 }
